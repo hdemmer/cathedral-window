@@ -1,0 +1,463 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FD9F42D515F3BE750092B98B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D415F3BE750092B98B /* UIKit.framework */; };
+		FD9F42D715F3BE750092B98B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D615F3BE750092B98B /* Foundation.framework */; };
+		FD9F42D915F3BE750092B98B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D815F3BE750092B98B /* CoreGraphics.framework */; };
+		FD9F42DB15F3BE750092B98B /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42DA15F3BE750092B98B /* GLKit.framework */; };
+		FD9F42DD15F3BE750092B98B /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42DC15F3BE750092B98B /* OpenGLES.framework */; };
+		FD9F42E315F3BE750092B98B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FD9F42E115F3BE750092B98B /* InfoPlist.strings */; };
+		FD9F42E515F3BE750092B98B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F42E415F3BE750092B98B /* main.m */; };
+		FD9F42E915F3BE750092B98B /* CWAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F42E815F3BE750092B98B /* CWAppDelegate.m */; };
+		FD9F42EC15F3BE750092B98B /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FD9F42EA15F3BE750092B98B /* MainStoryboard.storyboard */; };
+		FD9F42EE15F3BE750092B98B /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = FD9F42ED15F3BE750092B98B /* Shader.fsh */; };
+		FD9F42F015F3BE750092B98B /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = FD9F42EF15F3BE750092B98B /* Shader.vsh */; };
+		FD9F42F315F3BE750092B98B /* CWViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F42F215F3BE750092B98B /* CWViewController.m */; };
+		FD9F42FB15F3BE750092B98B /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42FA15F3BE750092B98B /* SenTestingKit.framework */; };
+		FD9F42FC15F3BE750092B98B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D415F3BE750092B98B /* UIKit.framework */; };
+		FD9F42FD15F3BE750092B98B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D615F3BE750092B98B /* Foundation.framework */; };
+		FD9F430515F3BE750092B98B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FD9F430315F3BE750092B98B /* InfoPlist.strings */; };
+		FD9F430815F3BE750092B98B /* CathedralWindowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F430715F3BE750092B98B /* CathedralWindowTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FD9F42FE15F3BE750092B98B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FD9F42C715F3BE750092B98B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FD9F42CF15F3BE750092B98B;
+			remoteInfo = CathedralWindow;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		FD9F42D015F3BE750092B98B /* CathedralWindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CathedralWindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD9F42D415F3BE750092B98B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		FD9F42D615F3BE750092B98B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FD9F42D815F3BE750092B98B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FD9F42DA15F3BE750092B98B /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		FD9F42DC15F3BE750092B98B /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		FD9F42E015F3BE750092B98B /* CathedralWindow-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CathedralWindow-Info.plist"; sourceTree = "<group>"; };
+		FD9F42E215F3BE750092B98B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FD9F42E415F3BE750092B98B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FD9F42E615F3BE750092B98B /* CathedralWindow-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CathedralWindow-Prefix.pch"; sourceTree = "<group>"; };
+		FD9F42E715F3BE750092B98B /* CWAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CWAppDelegate.h; sourceTree = "<group>"; };
+		FD9F42E815F3BE750092B98B /* CWAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CWAppDelegate.m; sourceTree = "<group>"; };
+		FD9F42EB15F3BE750092B98B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		FD9F42ED15F3BE750092B98B /* Shader.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.fsh; path = Shaders/Shader.fsh; sourceTree = "<group>"; };
+		FD9F42EF15F3BE750092B98B /* Shader.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = Shader.vsh; path = Shaders/Shader.vsh; sourceTree = "<group>"; };
+		FD9F42F115F3BE750092B98B /* CWViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CWViewController.h; sourceTree = "<group>"; };
+		FD9F42F215F3BE750092B98B /* CWViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CWViewController.m; sourceTree = "<group>"; };
+		FD9F42F915F3BE750092B98B /* CathedralWindowTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CathedralWindowTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD9F42FA15F3BE750092B98B /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		FD9F430215F3BE750092B98B /* CathedralWindowTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CathedralWindowTests-Info.plist"; sourceTree = "<group>"; };
+		FD9F430415F3BE750092B98B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FD9F430615F3BE750092B98B /* CathedralWindowTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CathedralWindowTests.h; sourceTree = "<group>"; };
+		FD9F430715F3BE750092B98B /* CathedralWindowTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CathedralWindowTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FD9F42CD15F3BE750092B98B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD9F42D515F3BE750092B98B /* UIKit.framework in Frameworks */,
+				FD9F42D715F3BE750092B98B /* Foundation.framework in Frameworks */,
+				FD9F42D915F3BE750092B98B /* CoreGraphics.framework in Frameworks */,
+				FD9F42DB15F3BE750092B98B /* GLKit.framework in Frameworks */,
+				FD9F42DD15F3BE750092B98B /* OpenGLES.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD9F42F515F3BE750092B98B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD9F42FB15F3BE750092B98B /* SenTestingKit.framework in Frameworks */,
+				FD9F42FC15F3BE750092B98B /* UIKit.framework in Frameworks */,
+				FD9F42FD15F3BE750092B98B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FD9F42C515F3BE750092B98B = {
+			isa = PBXGroup;
+			children = (
+				FD9F42DE15F3BE750092B98B /* CathedralWindow */,
+				FD9F430015F3BE750092B98B /* CathedralWindowTests */,
+				FD9F42D315F3BE750092B98B /* Frameworks */,
+				FD9F42D115F3BE750092B98B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FD9F42D115F3BE750092B98B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FD9F42D015F3BE750092B98B /* CathedralWindow.app */,
+				FD9F42F915F3BE750092B98B /* CathedralWindowTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FD9F42D315F3BE750092B98B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FD9F42D415F3BE750092B98B /* UIKit.framework */,
+				FD9F42D615F3BE750092B98B /* Foundation.framework */,
+				FD9F42D815F3BE750092B98B /* CoreGraphics.framework */,
+				FD9F42DA15F3BE750092B98B /* GLKit.framework */,
+				FD9F42DC15F3BE750092B98B /* OpenGLES.framework */,
+				FD9F42FA15F3BE750092B98B /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FD9F42DE15F3BE750092B98B /* CathedralWindow */ = {
+			isa = PBXGroup;
+			children = (
+				FD9F42E715F3BE750092B98B /* CWAppDelegate.h */,
+				FD9F42E815F3BE750092B98B /* CWAppDelegate.m */,
+				FD9F42EA15F3BE750092B98B /* MainStoryboard.storyboard */,
+				FD9F42ED15F3BE750092B98B /* Shader.fsh */,
+				FD9F42EF15F3BE750092B98B /* Shader.vsh */,
+				FD9F42F115F3BE750092B98B /* CWViewController.h */,
+				FD9F42F215F3BE750092B98B /* CWViewController.m */,
+				FD9F42DF15F3BE750092B98B /* Supporting Files */,
+			);
+			path = CathedralWindow;
+			sourceTree = "<group>";
+		};
+		FD9F42DF15F3BE750092B98B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FD9F42E015F3BE750092B98B /* CathedralWindow-Info.plist */,
+				FD9F42E115F3BE750092B98B /* InfoPlist.strings */,
+				FD9F42E415F3BE750092B98B /* main.m */,
+				FD9F42E615F3BE750092B98B /* CathedralWindow-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FD9F430015F3BE750092B98B /* CathedralWindowTests */ = {
+			isa = PBXGroup;
+			children = (
+				FD9F430615F3BE750092B98B /* CathedralWindowTests.h */,
+				FD9F430715F3BE750092B98B /* CathedralWindowTests.m */,
+				FD9F430115F3BE750092B98B /* Supporting Files */,
+			);
+			path = CathedralWindowTests;
+			sourceTree = "<group>";
+		};
+		FD9F430115F3BE750092B98B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FD9F430215F3BE750092B98B /* CathedralWindowTests-Info.plist */,
+				FD9F430315F3BE750092B98B /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FD9F42CF15F3BE750092B98B /* CathedralWindow */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FD9F430B15F3BE750092B98B /* Build configuration list for PBXNativeTarget "CathedralWindow" */;
+			buildPhases = (
+				FD9F42CC15F3BE750092B98B /* Sources */,
+				FD9F42CD15F3BE750092B98B /* Frameworks */,
+				FD9F42CE15F3BE750092B98B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CathedralWindow;
+			productName = CathedralWindow;
+			productReference = FD9F42D015F3BE750092B98B /* CathedralWindow.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FD9F42F815F3BE750092B98B /* CathedralWindowTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FD9F430E15F3BE750092B98B /* Build configuration list for PBXNativeTarget "CathedralWindowTests" */;
+			buildPhases = (
+				FD9F42F415F3BE750092B98B /* Sources */,
+				FD9F42F515F3BE750092B98B /* Frameworks */,
+				FD9F42F615F3BE750092B98B /* Resources */,
+				FD9F42F715F3BE750092B98B /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FD9F42FF15F3BE750092B98B /* PBXTargetDependency */,
+			);
+			name = CathedralWindowTests;
+			productName = CathedralWindowTests;
+			productReference = FD9F42F915F3BE750092B98B /* CathedralWindowTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FD9F42C715F3BE750092B98B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = CW;
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = FD9F42CA15F3BE750092B98B /* Build configuration list for PBXProject "CathedralWindow" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = FD9F42C515F3BE750092B98B;
+			productRefGroup = FD9F42D115F3BE750092B98B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FD9F42CF15F3BE750092B98B /* CathedralWindow */,
+				FD9F42F815F3BE750092B98B /* CathedralWindowTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FD9F42CE15F3BE750092B98B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD9F42E315F3BE750092B98B /* InfoPlist.strings in Resources */,
+				FD9F42EC15F3BE750092B98B /* MainStoryboard.storyboard in Resources */,
+				FD9F42EE15F3BE750092B98B /* Shader.fsh in Resources */,
+				FD9F42F015F3BE750092B98B /* Shader.vsh in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD9F42F615F3BE750092B98B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD9F430515F3BE750092B98B /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		FD9F42F715F3BE750092B98B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FD9F42CC15F3BE750092B98B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD9F42E515F3BE750092B98B /* main.m in Sources */,
+				FD9F42E915F3BE750092B98B /* CWAppDelegate.m in Sources */,
+				FD9F42F315F3BE750092B98B /* CWViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD9F42F415F3BE750092B98B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD9F430815F3BE750092B98B /* CathedralWindowTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FD9F42FF15F3BE750092B98B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FD9F42CF15F3BE750092B98B /* CathedralWindow */;
+			targetProxy = FD9F42FE15F3BE750092B98B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		FD9F42E115F3BE750092B98B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FD9F42E215F3BE750092B98B /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		FD9F42EA15F3BE750092B98B /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FD9F42EB15F3BE750092B98B /* en */,
+			);
+			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
+		FD9F430315F3BE750092B98B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FD9F430415F3BE750092B98B /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FD9F430915F3BE750092B98B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		FD9F430A15F3BE750092B98B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FD9F430C15F3BE750092B98B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CathedralWindow/CathedralWindow-Prefix.pch";
+				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
+				INFOPLIST_FILE = "CathedralWindow/CathedralWindow-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		FD9F430D15F3BE750092B98B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CathedralWindow/CathedralWindow-Prefix.pch";
+				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
+				INFOPLIST_FILE = "CathedralWindow/CathedralWindow-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		FD9F430F15F3BE750092B98B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CathedralWindow.app/CathedralWindow";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CathedralWindow/CathedralWindow-Prefix.pch";
+				INFOPLIST_FILE = "CathedralWindowTests/CathedralWindowTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		FD9F431015F3BE750092B98B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/CathedralWindow.app/CathedralWindow";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "CathedralWindow/CathedralWindow-Prefix.pch";
+				INFOPLIST_FILE = "CathedralWindowTests/CathedralWindowTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FD9F42CA15F3BE750092B98B /* Build configuration list for PBXProject "CathedralWindow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD9F430915F3BE750092B98B /* Debug */,
+				FD9F430A15F3BE750092B98B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FD9F430B15F3BE750092B98B /* Build configuration list for PBXNativeTarget "CathedralWindow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD9F430C15F3BE750092B98B /* Debug */,
+				FD9F430D15F3BE750092B98B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		FD9F430E15F3BE750092B98B /* Build configuration list for PBXNativeTarget "CathedralWindowTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FD9F430F15F3BE750092B98B /* Debug */,
+				FD9F431015F3BE750092B98B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FD9F42C715F3BE750092B98B /* Project object */;
+}
