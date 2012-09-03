@@ -8,9 +8,13 @@
 
 #import "CWWindow.h"
 
-@implementation CWWindow
+@interface CWWindow ()
+{
+    int _numVertices;
+}
+@end
 
-int numVertices = 24;
+@implementation CWWindow
 
 - (id)initWithImage:(UIImage *)image
 {
@@ -18,7 +22,7 @@ int numVertices = 24;
     
     if (self)
     {
-        [self setup];
+        [self setupWithImage:image];
     }
     
     return self;
@@ -30,55 +34,89 @@ float cwRandom(float min, float max)
     return (rand() / (float)RAND_MAX)*(max - min) + min;
 }
 
-
-- (void) bindWindowVertices
+- (void) setupWithImage:(UIImage*)image
 {
-    CWVertex * vertices = malloc(numVertices * sizeof(CWVertex));
+    // First get the image into your data buffer
+    CGImageRef imageRef = [image CGImage];
+    NSUInteger width = CGImageGetWidth(imageRef);
+    NSUInteger height = CGImageGetHeight(imageRef);
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    unsigned char *rawData = (unsigned char*) calloc(height * width * 4, sizeof(unsigned char));
+    NSUInteger bytesPerPixel = 4;
+    NSUInteger bytesPerRow = bytesPerPixel * width;
+    NSUInteger bitsPerComponent = 8;
+    CGContextRef context = CGBitmapContextCreate(rawData, width, height,
+                                                 bitsPerComponent, bytesPerRow, colorSpace,
+                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    CGColorSpaceRelease(colorSpace);
     
-    for (int i = 0; i < numVertices; i++)
-    {
-        vertices[i].z = -4;
-        
-        vertices[i].r = cwRandom(0.5, 1);
-        vertices[i].g = cwRandom(0.5, 1);
-        vertices[i].b = cwRandom(0.5, 1);
-    }
-    
-    for (int i = 0; i < numVertices; i+=6)
-    {
-        
-        vertices[0+i].x = -1+i/3-2;
-        vertices[0+i].y = -1;
-        
-        vertices[1+i].x = 1+i/3-2;
-        vertices[1+i].y = 1;
-        
-        vertices[2+i].x = 1+i/3-2;
-        vertices[2+i].y = -1;
-        
-        vertices[3+i].x = 1+i/3-2;
-        vertices[3+i].y = 1;
-        
-        vertices[4+i].x = -1+i/3-2;
-        vertices[4+i].y = -1;
-        
-        vertices[5+i].x = -1+i/3-2;
-        vertices[5+i].y = 1;
-    }
-    
-    glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*numVertices, vertices, GL_STATIC_DRAW);
-    
-    free(vertices);
-}
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    CGContextRelease(context);
 
-- (void) setup
-{
+    // now setup the buffers
+    
     glGenVertexArraysOES(1, &_vertexArray);
     glBindVertexArrayOES(_vertexArray);
     
     glGenBuffers(1, &_vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-    [self bindWindowVertices];
+    
+    // generate vertices
+    
+    _numVertices = width*height*6;
+    
+    CWVertex * vertices = malloc(_numVertices * sizeof(CWVertex));
+    
+    for (int i = 0; i < _numVertices; i++)
+    {
+        vertices[i].z = -2;
+    }
+    
+    float pixWidth = 2.0f / width;
+    float pixHeigth = 2.0f / height;
+    
+    for (int x=0; x<width; x++)
+    {
+        for (int y=0; y<height; y++)
+        {
+            int baseIndex = 6*(x+width*y);
+            
+            int byteIndex = (bytesPerRow * y) + x * bytesPerPixel;
+            
+            for (int i = 0; i<6;i++)
+            {
+                vertices[baseIndex+i].r = rawData[byteIndex] / 255.0f + cwRandom(0.0, 0.1);
+                vertices[baseIndex+i].g = rawData[byteIndex+1]/ 255.0f +cwRandom(0.0, 0.1);
+                vertices[baseIndex+i].b = rawData[byteIndex+2]/ 255.0f +cwRandom(0.0, 0.1);
+            }
+            
+                
+                vertices[baseIndex+0].x = -1+pixWidth * x;
+                vertices[baseIndex+0].y = -1+pixHeigth * y;
+                
+                vertices[baseIndex+1].x = -1+pixWidth*(x + 1);
+                vertices[baseIndex+1].y = -1+pixHeigth*(y+1);
+                
+                vertices[baseIndex+2].x = -1+pixWidth*(x+1);
+                vertices[baseIndex+2].y = -1+pixHeigth*y;
+                
+                vertices[baseIndex+3].x = -1+pixWidth*(x+1);
+                vertices[baseIndex+3].y = -1+pixHeigth*(y+1);
+                
+                vertices[baseIndex+4].x = -1+pixWidth*x;
+                vertices[baseIndex+4].y = -1+pixHeigth*y;
+                
+                vertices[baseIndex+5].x = -1+pixWidth*x;
+                vertices[baseIndex+5].y = -1+pixHeigth*(y+1);
+         
+        }
+    }
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*_numVertices, vertices, GL_STATIC_DRAW);
+    
+    free(vertices);
+    
+    // and finish
     
     glEnableVertexAttribArray(ATTRIB_VERTEX);
     glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 24, 0);
@@ -86,13 +124,15 @@ float cwRandom(float min, float max)
     glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(12));
     
     glBindVertexArrayOES(0);
+    
+    free(rawData);
 
 }
 
 - (void)draw
 {
     glBindVertexArrayOES(_vertexArray);
-    glDrawArrays(GL_TRIANGLES, 0, numVertices);
+    glDrawArrays(GL_TRIANGLES, 0, _numVertices);
 
 }
 

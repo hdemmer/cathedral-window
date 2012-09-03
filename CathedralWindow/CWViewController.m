@@ -88,7 +88,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     glEnable(GL_DEPTH_TEST);
     
-    self.windows = [NSArray arrayWithObject:[[CWWindow alloc] initWithImage:nil]];
+    self.windows = [NSArray arrayWithObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"]]];
 }
 
 - (void)tearDownGL
