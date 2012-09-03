@@ -144,7 +144,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     float t = self.timeSinceFirstResume;
     
-    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.5*sinf(t), -5);
+    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.5*sinf(t), sinf(t));
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.9f, 0.5f);
  
     for (CWWindow * window in self.windows)

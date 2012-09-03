@@ -34,6 +34,8 @@ float cwRandom(float min, float max)
     return (rand() / (float)RAND_MAX)*(max - min) + min;
 }
 
+#define IMAGE_SIZE 256
+
 - (void) setupWithImage:(UIImage*)image
 {
     // First get the image into your data buffer
@@ -45,12 +47,13 @@ float cwRandom(float min, float max)
     NSUInteger bytesPerPixel = 4;
     NSUInteger bytesPerRow = bytesPerPixel * width;
     NSUInteger bitsPerComponent = 8;
-    CGContextRef context = CGBitmapContextCreate(rawData, width, height,
+    CGContextRef context = CGBitmapContextCreate(rawData, IMAGE_SIZE, IMAGE_SIZE,
                                                  bitsPerComponent, bytesPerRow, colorSpace,
                                                  kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     CGColorSpaceRelease(colorSpace);
     
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    CGContextScaleCTM(context, 1, -1);
+    CGContextDrawImage(context, CGRectMake(0, -IMAGE_SIZE, IMAGE_SIZE * width/(float)height, IMAGE_SIZE), imageRef);
     CGContextRelease(context);
 
     // now setup the buffers
@@ -63,13 +66,16 @@ float cwRandom(float min, float max)
     
     // generate vertices
     
+    width = IMAGE_SIZE;
+    height = IMAGE_SIZE;
+    
     _numVertices = width*height*6;
     
     CWVertex * vertices = malloc(_numVertices * sizeof(CWVertex));
     
     for (int i = 0; i < _numVertices; i++)
     {
-        vertices[i].z = -2;
+        vertices[i].z = -0.1;
     }
     
     float pixWidth = 2.0f / width;
