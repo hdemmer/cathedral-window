@@ -11,4 +11,6 @@
 
 @interface CWViewController : GLKViewController
 
+@property (nonatomic, retain) NSArray * windows;
+
 @end

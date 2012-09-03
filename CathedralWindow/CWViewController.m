@@ -8,44 +8,24 @@
 
 #import "CWViewController.h"
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+#import "CWWindow.h"
 
 // Uniform index.
 enum
 {
     UNIFORM_MODELVIEWPROJECTION_MATRIX,
     UNIFORM_SUN_VECTOR,
+    UNIFORM_SUN_COLOR,
     NUM_UNIFORMS
 };
 GLint uniforms[NUM_UNIFORMS];
-
-// Attribute index.
-enum
-{
-    ATTRIB_VERTEX,
-    ATTRIB_COLOR,
-    NUM_ATTRIBUTES
-};
-
-typedef struct {
-    float x;
-    float y;
-    float z;
-    float r;
-    float g;
-    float b;
-} CWVertex;
 
 @interface CWViewController () {
     GLuint _program;
     
     GLKMatrix4 _modelViewProjectionMatrix;
-    
-    GLuint _vertexArray;
-    GLuint _vertexBuffer;
 }
 @property (strong, nonatomic) EAGLContext *context;
-@property (strong, nonatomic) GLKBaseEffect *effect;
 
 - (void)setupGL;
 - (void)tearDownGL;
@@ -59,7 +39,7 @@ typedef struct {
 @implementation CWViewController
 
 @synthesize context = _context;
-@synthesize effect = _effect;
+@synthesize windows=_windows;
 
 - (void)viewDidLoad
 {
@@ -100,54 +80,6 @@ typedef struct {
 {
     return YES;
 }
-
-float cwRandom(float min, float max)
-{
-    return (rand() / (float)RAND_MAX)*(max - min) + min;
-}
-
-int numVertices = 24;
-
-- (void) bindWindowVertices
-{
-    CWVertex * vertices = malloc(numVertices * sizeof(CWVertex));
-    
-    for (int i = 0; i < numVertices; i++)
-    {
-        vertices[i].z = -4;
-        
-        vertices[i].r = cwRandom(0.5, 1);
-        vertices[i].g = cwRandom(0.5, 1);
-        vertices[i].b = cwRandom(0.5, 1);
-    }
-    
-    for (int i = 0; i < numVertices; i+=6)
-    {
-        
-        vertices[0+i].x = -1+i/3-2;
-        vertices[0+i].y = -1;
-        
-        vertices[1+i].x = 1+i/3-2;
-        vertices[1+i].y = 1;
-        
-        vertices[2+i].x = 1+i/3-2;
-        vertices[2+i].y = -1;
-        
-        vertices[3+i].x = 1+i/3-2;
-        vertices[3+i].y = 1;
-        
-        vertices[4+i].x = -1+i/3-2;
-        vertices[4+i].y = -1;
-        
-        vertices[5+i].x = -1+i/3-2;
-        vertices[5+i].y = 1;
-    }
-    
-    glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*numVertices, vertices, GL_STATIC_DRAW);
-    
-    free(vertices);
-}
-
 - (void)setupGL
 {
     [EAGLContext setCurrentContext:self.context];
@@ -156,27 +88,19 @@ int numVertices = 24;
     
     glEnable(GL_DEPTH_TEST);
     
-    glGenVertexArraysOES(1, &_vertexArray);
-    glBindVertexArrayOES(_vertexArray);
-    
-    glGenBuffers(1, &_vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-    [self bindWindowVertices];
-    
-    glEnableVertexAttribArray(ATTRIB_VERTEX);
-    glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 24, 0);
-    glEnableVertexAttribArray(ATTRIB_COLOR);
-    glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(12));
-    
-    glBindVertexArrayOES(0);
+    self.windows = [NSArray arrayWithObject:[[CWWindow alloc] initWithImage:nil]];
 }
 
 - (void)tearDownGL
 {
     [EAGLContext setCurrentContext:self.context];
     
-    glDeleteBuffers(1, &_vertexBuffer);
-    glDeleteVertexArraysOES(1, &_vertexArray);
+    for (CWWindow * window in self.windows)
+    {
+        [window tearDown];
+    }
+    self.windows = nil;
+    
     
     if (_program) {
         glDeleteProgram(_program);
@@ -212,7 +136,6 @@ int numVertices = 24;
     glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    glBindVertexArrayOES(_vertexArray);
     
     // Render the object again with ES2
     glUseProgram(_program);
@@ -222,8 +145,12 @@ int numVertices = 24;
     float t = self.timeSinceFirstResume;
     
     glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.5*sinf(t), -5);
-    
-    glDrawArrays(GL_TRIANGLES, 0, numVertices);
+    glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.9f, 0.5f);
+ 
+    for (CWWindow * window in self.windows)
+    {
+        [window draw];
+    }
 }
 
 #pragma mark -  OpenGL ES 2 shader compilation
@@ -284,6 +211,7 @@ int numVertices = 24;
     // Get uniform locations.
     uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(_program, "modelViewProjectionMatrix");
     uniforms[UNIFORM_SUN_VECTOR] = glGetUniformLocation(_program, "sunVector");
+    uniforms[UNIFORM_SUN_COLOR] = glGetUniformLocation(_program, "sunColor");
     
     // Release vertex and fragment shaders.
     if (vertShader) {

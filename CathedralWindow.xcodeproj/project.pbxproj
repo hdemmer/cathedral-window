@@ -24,6 +24,7 @@
 		FD9F42FD15F3BE750092B98B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D615F3BE750092B98B /* Foundation.framework */; };
 		FD9F430515F3BE750092B98B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FD9F430315F3BE750092B98B /* InfoPlist.strings */; };
 		FD9F430815F3BE750092B98B /* CathedralWindowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F430715F3BE750092B98B /* CathedralWindowTests.m */; };
+		FD9F431715F54E610092B98B /* CWWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F431615F54E610092B98B /* CWWindow.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,8 @@
 		FD9F430415F3BE750092B98B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FD9F430615F3BE750092B98B /* CathedralWindowTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CathedralWindowTests.h; sourceTree = "<group>"; };
 		FD9F430715F3BE750092B98B /* CathedralWindowTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CathedralWindowTests.m; sourceTree = "<group>"; };
+		FD9F431515F54E610092B98B /* CWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWWindow.h; sourceTree = "<group>"; };
+		FD9F431615F54E610092B98B /* CWWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWWindow.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +133,8 @@
 				FD9F42EF15F3BE750092B98B /* Shader.vsh */,
 				FD9F42F115F3BE750092B98B /* CWViewController.h */,
 				FD9F42F215F3BE750092B98B /* CWViewController.m */,
+				FD9F431515F54E610092B98B /* CWWindow.h */,
+				FD9F431615F54E610092B98B /* CWWindow.m */,
 				FD9F42DF15F3BE750092B98B /* Supporting Files */,
 			);
 			path = CathedralWindow;
@@ -277,6 +282,7 @@
 				FD9F42E515F3BE750092B98B /* main.m in Sources */,
 				FD9F42E915F3BE750092B98B /* CWAppDelegate.m in Sources */,
 				FD9F42F315F3BE750092B98B /* CWViewController.m in Sources */,
+				FD9F431715F54E610092B98B /* CWWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +454,7 @@
 				FD9F430D15F3BE750092B98B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FD9F430E15F3BE750092B98B /* Build configuration list for PBXNativeTarget "CathedralWindowTests" */ = {
 			isa = XCConfigurationList;
@@ -456,6 +463,7 @@
 				FD9F431015F3BE750092B98B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
