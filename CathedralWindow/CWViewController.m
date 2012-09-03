@@ -14,6 +14,7 @@
 enum
 {
     UNIFORM_MODELVIEWPROJECTION_MATRIX,
+    UNIFORM_SUN_VECTOR,
     NUM_UNIFORMS
 };
 GLint uniforms[NUM_UNIFORMS];
@@ -22,17 +23,17 @@ GLint uniforms[NUM_UNIFORMS];
 enum
 {
     ATTRIB_VERTEX,
+    ATTRIB_COLOR,
     NUM_ATTRIBUTES
 };
 
 typedef struct {
-float x;
-float y;
-float z;
-//float r;
-//float g;
-//float b;
-//float a;
+    float x;
+    float y;
+    float z;
+    float r;
+    float g;
+    float b;
 } CWVertex;
 
 @interface CWViewController () {
@@ -65,7 +66,7 @@ float z;
     [super viewDidLoad];
     
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-
+    
     if (!self.context) {
         NSLog(@"Failed to create ES context");
     }
@@ -105,40 +106,42 @@ float cwRandom(float min, float max)
     return (rand() / (float)RAND_MAX)*(max - min) + min;
 }
 
+int numVertices = 24;
+
 - (void) bindWindowVertices
 {
-    int numVertices = 6;
     CWVertex * vertices = malloc(numVertices * sizeof(CWVertex));
     
     for (int i = 0; i < numVertices; i++)
     {
         vertices[i].z = -4;
-/*
+        
         vertices[i].r = cwRandom(0.5, 1);
         vertices[i].g = cwRandom(0.5, 1);
         vertices[i].b = cwRandom(0.5, 1);
-        vertices[i].a = 1;
- */
     }
     
-    vertices[0].x = -1;
-    vertices[0].y = -1;
-
-    vertices[1].x = 1;
-    vertices[1].y = 1;
-    
-    vertices[2].x = 1;
-    vertices[2].y = -1;
-
-    vertices[3].x = 1;
-    vertices[3].y = 1;
-    
-    vertices[4].x = -1;
-    vertices[4].y = -1;
-    
-    vertices[5].x = -1;
-    vertices[5].y = 1;
-
+    for (int i = 0; i < numVertices; i+=6)
+    {
+        
+        vertices[0+i].x = -1+i/3-2;
+        vertices[0+i].y = -1;
+        
+        vertices[1+i].x = 1+i/3-2;
+        vertices[1+i].y = 1;
+        
+        vertices[2+i].x = 1+i/3-2;
+        vertices[2+i].y = -1;
+        
+        vertices[3+i].x = 1+i/3-2;
+        vertices[3+i].y = 1;
+        
+        vertices[4+i].x = -1+i/3-2;
+        vertices[4+i].y = -1;
+        
+        vertices[5+i].x = -1+i/3-2;
+        vertices[5+i].y = 1;
+    }
     
     glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*numVertices, vertices, GL_STATIC_DRAW);
     
@@ -160,8 +163,10 @@ float cwRandom(float min, float max)
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     [self bindWindowVertices];
     
-    glEnableVertexAttribArray(GLKVertexAttribPosition);
-    glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(ATTRIB_VERTEX);
+    glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 24, 0);
+    glEnableVertexAttribArray(ATTRIB_COLOR);
+    glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(12));
     
     glBindVertexArrayOES(0);
 }
@@ -185,7 +190,7 @@ float cwRandom(float min, float max)
 {
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 0.1f, 100.0f);
-        
+    
     GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, -4.0f);
     baseModelViewMatrix = GLKMatrix4Rotate(baseModelViewMatrix, 0, 0.0f, 1.0f, 0.0f);
     
@@ -198,7 +203,7 @@ float cwRandom(float min, float max)
     modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 1.5f);
     modelViewMatrix = GLKMatrix4Rotate(modelViewMatrix, 0, 1.0f, 1.0f, 1.0f);
     modelViewMatrix = GLKMatrix4Multiply(baseModelViewMatrix, modelViewMatrix);
-
+    
     _modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
 }
 
@@ -214,7 +219,11 @@ float cwRandom(float min, float max)
     
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
     
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    float t = self.timeSinceFirstResume;
+    
+    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.5*sinf(t), -5);
+    
+    glDrawArrays(GL_TRIANGLES, 0, numVertices);
 }
 
 #pragma mark -  OpenGL ES 2 shader compilation
@@ -250,6 +259,7 @@ float cwRandom(float min, float max)
     // Bind attribute locations.
     // This needs to be done prior to linking.
     glBindAttribLocation(_program, ATTRIB_VERTEX, "position");
+    glBindAttribLocation(_program, ATTRIB_COLOR, "diffuse");
     
     // Link program.
     if (![self linkProgram:_program]) {
@@ -273,6 +283,7 @@ float cwRandom(float min, float max)
     
     // Get uniform locations.
     uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(_program, "modelViewProjectionMatrix");
+    uniforms[UNIFORM_SUN_VECTOR] = glGetUniformLocation(_program, "sunVector");
     
     // Release vertex and fragment shaders.
     if (vertShader) {
