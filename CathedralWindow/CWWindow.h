@@ -35,7 +35,11 @@ typedef struct {
     GLuint _vertexBuffer;
 
 }
-- (id)initWithImage:(UIImage*)image;
+
+@property (nonatomic, assign) float originX;
+@property (nonatomic, assign) float originY;
+
+- (id)initWithImage:(UIImage*)image X:(float)x Y:(float)y;
 
 - (void) draw;
 

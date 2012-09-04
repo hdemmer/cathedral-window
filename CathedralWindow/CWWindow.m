@@ -15,14 +15,18 @@
 @end
 
 @implementation CWWindow
+@synthesize originX=_originX;
+@synthesize originY=_originY;
 
-- (id)initWithImage:(UIImage *)image
+- (id)initWithImage:(UIImage *)image X:(float)x Y:(float)y
 {
     self = [super init];
     
     if (self)
     {
-        [self setupWithImage:image];
+        self.originX = x;
+        self.originY=y;
+        [self setupWithImage:image X:(float)x Y:(float)y];
     }
     
     return self;
@@ -36,7 +40,7 @@ float cwRandom(float min, float max)
 
 #define IMAGE_SIZE 256
 
-- (void) setupWithImage:(UIImage*)image
+- (void) setupWithImage:(UIImage*)image X:(float)xd Y:(float)yd
 {
     // First get the image into your data buffer
     CGImageRef imageRef = [image CGImage];
@@ -78,8 +82,8 @@ float cwRandom(float min, float max)
         vertices[i].z = -0.1;
     }
     
-    float pixWidth = 2.0f / width;
-    float pixHeigth = 2.0f / height;
+    float pixWidth = 1.0f / width;
+    float pixHeigth = 1.0f / height;
     
     for (int x=0; x<width; x++)
     {
@@ -97,23 +101,23 @@ float cwRandom(float min, float max)
             }
             
                 
-                vertices[baseIndex+0].x = -1+pixWidth * x;
-                vertices[baseIndex+0].y = -1+pixHeigth * y;
+                vertices[baseIndex+0].x = -0.5f+pixWidth * x + xd;
+                vertices[baseIndex+0].y = -0.5f+pixHeigth * y + yd;
                 
-                vertices[baseIndex+1].x = -1+pixWidth*(x + 1);
-                vertices[baseIndex+1].y = -1+pixHeigth*(y+1);
+                vertices[baseIndex+1].x = -0.5f+pixWidth*(x + 1) + xd;
+                vertices[baseIndex+1].y = -0.5f+pixHeigth*(y+1) + yd;
                 
-                vertices[baseIndex+2].x = -1+pixWidth*(x+1);
-                vertices[baseIndex+2].y = -1+pixHeigth*y;
+                vertices[baseIndex+2].x = -0.5f+pixWidth*(x+1) + xd;
+                vertices[baseIndex+2].y = -0.5f+pixHeigth*y + yd;
                 
-                vertices[baseIndex+3].x = -1+pixWidth*(x+1);
-                vertices[baseIndex+3].y = -1+pixHeigth*(y+1);
+                vertices[baseIndex+3].x = -0.5f+pixWidth*(x+1) + xd;
+                vertices[baseIndex+3].y = -0.5f+pixHeigth*(y+1) + yd;
                 
-                vertices[baseIndex+4].x = -1+pixWidth*x;
-                vertices[baseIndex+4].y = -1+pixHeigth*y;
+                vertices[baseIndex+4].x = -0.5f+pixWidth*x  + xd;
+                vertices[baseIndex+4].y = -0.5f+pixHeigth*y + yd;
                 
-                vertices[baseIndex+5].x = -1+pixWidth*x;
-                vertices[baseIndex+5].y = -1+pixHeigth*(y+1);
+                vertices[baseIndex+5].x = -0.5f+pixWidth*x  + xd;
+                vertices[baseIndex+5].y = -0.5f+pixHeigth*(y+1) + yd;
          
         }
     }

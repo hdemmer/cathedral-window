@@ -16,6 +16,7 @@ enum
     UNIFORM_MODELVIEWPROJECTION_MATRIX,
     UNIFORM_SUN_VECTOR,
     UNIFORM_SUN_COLOR,
+    UNIFORM_AMBIENT_INTENSITY,
     NUM_UNIFORMS
 };
 GLint uniforms[NUM_UNIFORMS];
@@ -41,9 +42,33 @@ GLint uniforms[NUM_UNIFORMS];
 @synthesize context = _context;
 @synthesize windows=_windows;
 
+- (void) longPressRecognizerFired:(UILongPressGestureRecognizer*)longPressRecognizer
+{
+    if (longPressRecognizer.state == UIGestureRecognizerStateEnded)
+    {
+        CGPoint location = [longPressRecognizer locationInView:self.view];
+        NSLog(@"%f %f", location.x, location.y);
+
+        
+        for (CWWindow * window in self.windows)
+        {                        
+            GLKVector4 res = GLKMatrix4MultiplyVector4(_modelViewProjectionMatrix, GLKVector4Make(window.originX, window.originY, -4.0,1.0));
+            
+            float windowX = (1.0f + res.x) * 0.5f;
+            float windowY = (1.0f + res.y) * 0.5f;
+            
+            NSLog(@"%f , %f", windowX, windowY);
+        }
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    UILongPressGestureRecognizer * longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressRecognizerFired:)];
+    longPressRecognizer.minimumPressDuration = 0.0;
+    [self.view addGestureRecognizer:longPressRecognizer];
     
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     
@@ -88,7 +113,11 @@ GLint uniforms[NUM_UNIFORMS];
     
     glEnable(GL_DEPTH_TEST);
     
-    self.windows = [NSArray arrayWithObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"]]];
+    self.windows = [NSArray arrayWithObjects:
+                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] X:-0.0 Y:-0.0],
+                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] X:-0.4 Y:-0.4],
+                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] X:0.4 Y:0.4]
+                    ,nil];
 }
 
 - (void)tearDownGL
@@ -118,13 +147,7 @@ GLint uniforms[NUM_UNIFORMS];
     GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, -4.0f);
     baseModelViewMatrix = GLKMatrix4Rotate(baseModelViewMatrix, 0, 0.0f, 1.0f, 0.0f);
     
-    // Compute the model view matrix for the object rendered with GLKit
-    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, -1.5f);
-    modelViewMatrix = GLKMatrix4Rotate(modelViewMatrix, 0, 1.0f, 1.0f, 1.0f);
-    modelViewMatrix = GLKMatrix4Multiply(baseModelViewMatrix, modelViewMatrix);
-    
-    // Compute the model view matrix for the object rendered with ES2
-    modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 1.5f);
+    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 1.5f);
     modelViewMatrix = GLKMatrix4Rotate(modelViewMatrix, 0, 1.0f, 1.0f, 1.0f);
     modelViewMatrix = GLKMatrix4Multiply(baseModelViewMatrix, modelViewMatrix);
     
@@ -146,7 +169,9 @@ GLint uniforms[NUM_UNIFORMS];
     
     glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.0*sinf(t),sinf(t));
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.9f, 0.5f);
- 
+
+    glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.2+0.05*cosf(t));
+
     for (CWWindow * window in self.windows)
     {
         [window draw];
@@ -212,6 +237,7 @@ GLint uniforms[NUM_UNIFORMS];
     uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(_program, "modelViewProjectionMatrix");
     uniforms[UNIFORM_SUN_VECTOR] = glGetUniformLocation(_program, "sunVector");
     uniforms[UNIFORM_SUN_COLOR] = glGetUniformLocation(_program, "sunColor");
+    uniforms[UNIFORM_AMBIENT_INTENSITY] = glGetUniformLocation(_program, "ambientIntensity");
     
     // Release vertex and fragment shaders.
     if (vertShader) {

@@ -13,6 +13,7 @@ varying lowp vec4 colorVarying;
 
 uniform mat4 modelViewProjectionMatrix;
 
+uniform float ambientIntensity;
 uniform vec3 sunVector;
 uniform vec3 sunColor;
 
@@ -31,7 +32,7 @@ void main()
     
     float luma = dot(diffuse, vec3(0.299,0.587,0.114));
     
-    vec3 base = diffuse * (0.2+sunAngleToNormal*0.05);
+    vec3 base = diffuse * ambientIntensity;
     vec3 colorGlow = mix(diffuse,luma*vec3(1.0,1.0,1.0), -1.0) * glowCoeff;  // kick out sat
     vec3 direct = sunAngle * luma*luma * sunColor;
 
