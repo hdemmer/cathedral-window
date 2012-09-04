@@ -113,7 +113,7 @@ GLint uniforms[NUM_UNIFORMS];
 - (void)update
 {
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
-    GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(65.0f), aspect, 0.1f, 100.0f);
+    GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
     
     GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, -4.0f);
     baseModelViewMatrix = GLKMatrix4Rotate(baseModelViewMatrix, 0, 0.0f, 1.0f, 0.0f);
@@ -144,7 +144,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     float t = self.timeSinceFirstResume;
     
-    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.5*sinf(t), sinf(t));
+    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.0*sinf(t),sinf(t));
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.9f, 0.5f);
  
     for (CWWindow * window in self.windows)

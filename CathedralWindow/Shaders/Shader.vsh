@@ -18,18 +18,23 @@ uniform vec3 sunColor;
 
 void main()
 {
-    float sunAngle = clamp(dot(normalize(sunVector), normalize(position)),0.0,1.0);
+    vec3 normal = vec3(0.0,0.0,-1.0);
     
+    float sunAngle = clamp(dot(normalize(sunVector), normalize(-position+8.0*normal))-0.5,0.0,1.0);
+        
+    float sunAngleToNormal = dot(normalize(sunVector), normal);
+    
+    float glowCoeff = (clamp(sunAngleToNormal,0.0,1.0) + sunAngle)*0.5;
+
+    sunAngle = clamp(sunAngle-0.46,0.0,1.0)*50.0;
     sunAngle = sunAngle * sunAngle;
     
     float luma = dot(diffuse, vec3(0.299,0.587,0.114));
     
-    vec3 base = diffuse * 0.2;
-    vec3 colorGlow = mix(diffuse,luma*vec3(1.0,1.0,1.0), -1.0) * sunAngle;
-    vec3 direct = clamp(sunAngle-0.5,0.0,1.0) * luma * sunColor;
-    
-    sunAngle = sunAngle * sunAngle;
-    
+    vec3 base = diffuse * (0.2+sunAngleToNormal*0.05);
+    vec3 colorGlow = mix(diffuse,luma*vec3(1.0,1.0,1.0), -1.0) * glowCoeff;  // kick out sat
+    vec3 direct = sunAngle * luma*luma * sunColor;
+
     colorVarying = vec4(base + colorGlow + direct,1.0);
     
     gl_Position = modelViewProjectionMatrix * vec4(position,1.0);
