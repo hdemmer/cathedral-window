@@ -13,6 +13,8 @@ varying lowp vec4 colorVarying;
 
 uniform mat4 modelViewProjectionMatrix;
 
+uniform vec3 eyePosition;
+
 uniform float ambientIntensity;
 uniform vec3 sunVector;
 uniform vec3 sunColor;
@@ -21,7 +23,7 @@ void main()
 {
     vec3 normal = vec3(0.0,0.0,-1.0);
     
-    float sunAngle = clamp(dot(normalize(sunVector), normalize(-position+8.0*normal))-0.5,0.0,1.0);
+    float sunAngle = clamp(dot(normalize(sunVector), normalize(eyePosition-position+6.0*normal))-0.5,0.0,1.0);
         
     float sunAngleToNormal = dot(normalize(sunVector), normal);
     

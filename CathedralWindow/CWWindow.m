@@ -50,6 +50,12 @@
     _numVertices = result.numberOfVertices;
     
     CWVertex * vertices = result.vertices;
+
+    for (int i =0; i< _numVertices; i+=3)
+    {
+        
+    }
+
     
     for (int i =0; i< _numVertices; i++)
     {

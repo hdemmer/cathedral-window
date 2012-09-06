@@ -14,6 +14,7 @@
 enum
 {
     UNIFORM_MODELVIEWPROJECTION_MATRIX,
+    UNIFORM_EYE_POSITION,
     UNIFORM_SUN_VECTOR,
     UNIFORM_SUN_COLOR,
     UNIFORM_AMBIENT_INTENSITY,
@@ -157,6 +158,8 @@ GLint uniforms[NUM_UNIFORMS];
 
     GLKVector3 eye = GLKVector3Make(x, y, z);
     eye = GLKVector3Normalize(eye);
+    
+    glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
 
     GLKMatrix4 modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, 0, 0, 0, 0, 1, 0);
         
@@ -244,6 +247,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     // Get uniform locations.
     uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX] = glGetUniformLocation(_program, "modelViewProjectionMatrix");
+    uniforms[UNIFORM_EYE_POSITION] = glGetUniformLocation(_program, "eyePosition");
     uniforms[UNIFORM_SUN_VECTOR] = glGetUniformLocation(_program, "sunVector");
     uniforms[UNIFORM_SUN_COLOR] = glGetUniformLocation(_program, "sunColor");
     uniforms[UNIFORM_AMBIENT_INTENSITY] = glGetUniformLocation(_program, "ambientIntensity");
