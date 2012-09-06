@@ -51,6 +51,13 @@
     
     CWVertex * vertices = result.vertices;
     
+    for (int i =0; i< _numVertices; i++)
+    {
+        vertices[i].x += -0.5 + self.origin.x;
+        vertices[i].y += -0.5 + self.origin.y;
+        vertices[i].z += self.origin.z;
+    }
+    
     glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*_numVertices, vertices, GL_STATIC_DRAW);
 
     // TODO: free

@@ -10,7 +10,7 @@
 
 #define IMAGE_SIZE 256
 
-#define GRID_STEP 16
+#define GRID_STEP 8
 
 
 float cwRandom(float min, float max)
@@ -20,11 +20,67 @@ float cwRandom(float min, float max)
 
 @implementation UIImage (Segmentation)
 
+- (UIImage*)imageByScalingAndCroppingForSize:(CGSize)targetSize
+{
+    UIImage *sourceImage = self;
+    UIImage *newImage = nil;        
+    CGSize imageSize = sourceImage.size;
+    CGFloat width = imageSize.width;
+    CGFloat height = imageSize.height;
+    CGFloat targetWidth = targetSize.width;
+    CGFloat targetHeight = targetSize.height;
+    CGFloat scaleFactor = 0.0;
+    CGFloat scaledWidth = targetWidth;
+    CGFloat scaledHeight = targetHeight;
+    CGPoint thumbnailPoint = CGPointMake(0.0,0.0);
+    
+    if (CGSizeEqualToSize(imageSize, targetSize) == NO) 
+    {
+        CGFloat widthFactor = targetWidth / width;
+        CGFloat heightFactor = targetHeight / height;
+        
+        if (widthFactor > heightFactor) 
+            scaleFactor = widthFactor; // scale to fit height
+        else
+            scaleFactor = heightFactor; // scale to fit width
+        scaledWidth  = width * scaleFactor;
+        scaledHeight = height * scaleFactor;
+        
+        // center the image
+        if (widthFactor > heightFactor)
+        {
+            thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5; 
+        }
+        else 
+            if (widthFactor < heightFactor)
+            {
+                thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5;
+            }
+    }       
+    
+    UIGraphicsBeginImageContext(targetSize); // this will crop
+    
+    CGRect thumbnailRect = CGRectZero;
+    thumbnailRect.origin = thumbnailPoint;
+    thumbnailRect.size.width  = scaledWidth;
+    thumbnailRect.size.height = scaledHeight;
+    
+    [sourceImage drawInRect:thumbnailRect];
+    
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    if(newImage == nil) 
+        NSLog(@"could not scale image");
+    
+    //pop the context to get back to the default
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
 - (CWSegmentationResult)segmentIntoTriangles
 {
     CWSegmentationResult result;
     
-    CGImageRef imageRef = [self CGImage];
+    CGImageRef imageRef = [[self imageByScalingAndCroppingForSize:CGSizeMake(IMAGE_SIZE, IMAGE_SIZE)] CGImage];
     NSUInteger width = CGImageGetWidth(imageRef);
     NSUInteger height = CGImageGetHeight(imageRef);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -37,7 +93,9 @@ float cwRandom(float min, float max)
                                                  kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     CGColorSpaceRelease(colorSpace);
     
-    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    CGContextScaleCTM(context, 1, -1);
+    
+    CGContextDrawImage(context, CGRectMake(0, -IMAGE_SIZE, width, height), imageRef);
     CGContextRelease(context);
 
     unsigned char *hueData = (unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char));
@@ -91,7 +149,7 @@ float cwRandom(float min, float max)
     
     int numNodes = gridWidth * gridWidth;
     
-    float * nodes[2] = {calloc(numNodes, sizeof(float)),calloc(numNodes, sizeof(float))};
+    CWVertex * nodes = calloc(numNodes, sizeof(CWVertex));
     
     for (int x=0; x<gridWidth; x++)
     {
@@ -101,24 +159,37 @@ float cwRandom(float min, float max)
             int cx = x*gridStep+ shift*(gridStep / 2);
             int cy = y*gridStep+ gridStep / 2;
             
-            /*
             int mx = cx;
             int my = cy;
             int sobelAtM = 0;
             
-            for (int sx=x*gridStep; x<(x+1)*gridStep; sx++)
+            for (int sx=x*gridStep; sx<(x+1)*gridStep; sx++)
             {
-                for (int sy=y*gridStep; y<(y+1)*gridStep; sy++)
+                for (int sy=y*gridStep; sy<(y+1)*gridStep; sy++)
                 {
+                    unsigned char sobel = sobelData[sx + IMAGE_SIZE * sy];
                     
+                    if (sobel > sobelAtM)
+                    {
+                        mx = sx;
+                        my = sy;
+                        sobelAtM = sobel;
+                    }
                     
                 }
-            }*/
+            }
             
+            nodes[x+gridWidth*y].x = mx/(float)IMAGE_SIZE;    // x
+            nodes[x+gridWidth*y].y = my/(float)IMAGE_SIZE;    // x
+            nodes[x+gridWidth*y].z = 0;
             
-            nodes[0][x+gridWidth*y] = cx/(float)IMAGE_SIZE;    // x
-            nodes[1][x+gridWidth*y] = cy/(float)IMAGE_SIZE;    // x
-            
+            unsigned char r = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel];
+            unsigned char g = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+1];
+            unsigned char b = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+2];
+            nodes[x+gridWidth*y].r = r / 255.0f +cwRandom(0.0, 0.1);
+            nodes[x+gridWidth*y].g = g / 255.0f +cwRandom(0.0, 0.1);
+            nodes[x+gridWidth*y].b = b / 255.0f +cwRandom(0.0, 0.1);
+
         }
     }
     
@@ -133,19 +204,41 @@ float cwRandom(float min, float max)
         {
             int baseIndex = 6*(x+gridWidth*y);
             
-            for (int i = 0; i<6;i++)
-            {
-                unsigned char r = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel];
-                unsigned char g = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+1];
-                unsigned char b = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+2];
-                vertices[baseIndex+i].r = r / 255.0f + cwRandom(0.0, 0.1);
-                vertices[baseIndex+i].g = g / 255.0f +cwRandom(0.0, 0.1);
-                vertices[baseIndex+i].b = b / 255.0f +cwRandom(0.0, 0.1);
+            
+            vertices[baseIndex+0] = nodes[x+1+y*gridWidth];
+            vertices[baseIndex+1] = nodes[x+y*gridWidth];
+            vertices[baseIndex+2] = nodes[x+1+(y+1)*gridWidth];
+            vertices[baseIndex+3] = nodes[x+1+(y+1)*gridWidth];
+            vertices[baseIndex+4] = nodes[x+y*gridWidth];
+            vertices[baseIndex+5] = nodes[x+(y+1)*gridWidth];
 
-                vertices[baseIndex+i].z = 0;
+            
+            float r = (vertices[baseIndex+0].r+vertices[baseIndex+1].r+vertices[baseIndex+2].r) / 3.0f;
+            float g = (vertices[baseIndex+0].g+vertices[baseIndex+1].g+vertices[baseIndex+2].g) / 3.0f;
+            float b = (vertices[baseIndex+0].b+vertices[baseIndex+1].b+vertices[baseIndex+2].b) / 3.0f;
+            
+            for (int i=0; i<3; i++)
+            {
+                vertices[baseIndex+i].r=r+cwRandom(0.0, 0.1);;
+                vertices[baseIndex+i].g=g+cwRandom(0.0, 0.1);;
+                vertices[baseIndex+i].b=b+cwRandom(0.0, 0.1);;
             }
             
+            baseIndex+=3;
             
+            r = (r+vertices[baseIndex+0].r+vertices[baseIndex+1].r+vertices[baseIndex+2].r) / 4.0f;
+            g = (g+vertices[baseIndex+0].g+vertices[baseIndex+1].g+vertices[baseIndex+2].g) / 4.0f;
+            b = (b+vertices[baseIndex+0].b+vertices[baseIndex+1].b+vertices[baseIndex+2].b) / 4.0f;
+
+                        
+            for (int i=0; i<3; i++)
+            {
+                vertices[baseIndex+i].r=r+cwRandom(0.0, 0.1);;
+                vertices[baseIndex+i].g=g+cwRandom(0.0, 0.1);;
+                vertices[baseIndex+i].b=b+cwRandom(0.0, 0.1);;
+            }
+            
+            /*
             vertices[baseIndex+0].x = -0.5f+nodes[0][x+1+y*gridWidth];
             vertices[baseIndex+0].y = -0.5f+nodes[1][x+1+y*gridWidth];
             
@@ -163,6 +256,7 @@ float cwRandom(float min, float max)
             
             vertices[baseIndex+5].x = -0.5f+nodes[0][x+(y+1)*gridWidth];
             vertices[baseIndex+5].y = -0.5f+nodes[1][x+(y+1)*gridWidth];
+             */
         }
     }
 
