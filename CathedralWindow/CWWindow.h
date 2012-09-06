@@ -10,24 +10,6 @@
 
 #import <GLKit/GLKit.h>
 
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
-
-// Attribute index.
-enum
-{
-    ATTRIB_VERTEX,
-    ATTRIB_COLOR,
-    NUM_ATTRIBUTES
-};
-
-typedef struct {
-    float x;
-    float y;
-    float z;
-    float r;
-    float g;
-    float b;
-} CWVertex;
 
 @interface CWWindow : NSObject
 {    

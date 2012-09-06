@@ -144,7 +144,7 @@ GLint uniforms[NUM_UNIFORMS];
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
     
-    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeLookAt(0, 0, 4, 0, 0, 0, 0, 1, 0);
+    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeLookAt(0, 0, 2, 0, 0, 0, 0, 1, 0);
         
     _modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
 }
