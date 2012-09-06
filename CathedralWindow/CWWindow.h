@@ -36,10 +36,9 @@ typedef struct {
 
 }
 
-@property (nonatomic, assign) float originX;
-@property (nonatomic, assign) float originY;
+@property (nonatomic, assign) GLKVector3 origin;
 
-- (id)initWithImage:(UIImage*)image X:(float)x Y:(float)y;
+- (id)initWithImage:(UIImage*)image origin:(GLKVector3)origin;
 
 - (void) draw;
 

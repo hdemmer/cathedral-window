@@ -52,7 +52,7 @@ GLint uniforms[NUM_UNIFORMS];
         
         for (CWWindow * window in self.windows)
         {                        
-            GLKVector4 res = GLKMatrix4MultiplyVector4(_modelViewProjectionMatrix, GLKVector4Make(window.originX, window.originY, -4.0,1.0));
+            GLKVector4 res = GLKMatrix4MultiplyVector4(_modelViewProjectionMatrix, GLKVector4Make(window.origin.x, window.origin.y, -4.0,1.0));
             
             float windowX = (1.0f + res.x) * 0.5f;
             float windowY = (1.0f + res.y) * 0.5f;
@@ -114,10 +114,10 @@ GLint uniforms[NUM_UNIFORMS];
     glEnable(GL_DEPTH_TEST);
     
     self.windows = [NSArray arrayWithObjects:
-                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] X:-0.0 Y:-0.0],
-                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] X:-0.4 Y:-0.4],
-                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] X:0.4 Y:0.4]
-                    ,nil];
+                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(0, 0, 0)],
+                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(-1, 0, 0)],
+                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(1, 0, 0)],
+                    nil];
 }
 
 - (void)tearDownGL
@@ -144,13 +144,8 @@ GLint uniforms[NUM_UNIFORMS];
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
     
-    GLKMatrix4 baseModelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, -4.0f);
-    baseModelViewMatrix = GLKMatrix4Rotate(baseModelViewMatrix, 0, 0.0f, 1.0f, 0.0f);
-    
-    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeTranslation(0.0f, 0.0f, 1.5f);
-    modelViewMatrix = GLKMatrix4Rotate(modelViewMatrix, 0, 1.0f, 1.0f, 1.0f);
-    modelViewMatrix = GLKMatrix4Multiply(baseModelViewMatrix, modelViewMatrix);
-    
+    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeLookAt(0, 0, 4, 0, 0, 0, 0, 1, 0);
+        
     _modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
 }
 
@@ -168,7 +163,7 @@ GLint uniforms[NUM_UNIFORMS];
     float t = self.timeSinceFirstResume;
     
     glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.0*sinf(t),sinf(t));
-    glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.9f, 0.5f);
+    glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
 
     glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.2+0.05*cosf(t));
 
