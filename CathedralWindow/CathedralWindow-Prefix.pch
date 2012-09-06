@@ -32,3 +32,8 @@ typedef struct {
     float b;
 } CWVertex;
 
+typedef struct {
+    CWVertex *vertices;
+    int numberOfVertices;
+} CWTriangles;
+

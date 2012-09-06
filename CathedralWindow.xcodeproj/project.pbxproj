@@ -27,6 +27,7 @@
 		FD9F431715F54E610092B98B /* CWWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F431615F54E610092B98B /* CWWindow.m */; };
 		FD9F431A15F5556A0092B98B /* splash.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FD9F431915F5556A0092B98B /* splash.jpg */; };
 		FD9F432115F89E650092B98B /* UIImage+Segmentation.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F432015F89E650092B98B /* UIImage+Segmentation.m */; };
+		FD9F432415F915500092B98B /* CWTriangleProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F432315F915500092B98B /* CWTriangleProcessor.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,8 @@
 		FD9F431915F5556A0092B98B /* splash.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = splash.jpg; sourceTree = "<group>"; };
 		FD9F431F15F89E650092B98B /* UIImage+Segmentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Segmentation.h"; sourceTree = "<group>"; };
 		FD9F432015F89E650092B98B /* UIImage+Segmentation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Segmentation.m"; sourceTree = "<group>"; };
+		FD9F432215F915500092B98B /* CWTriangleProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWTriangleProcessor.h; sourceTree = "<group>"; };
+		FD9F432315F915500092B98B /* CWTriangleProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWTriangleProcessor.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +146,8 @@
 				FD9F431615F54E610092B98B /* CWWindow.m */,
 				FD9F431F15F89E650092B98B /* UIImage+Segmentation.h */,
 				FD9F432015F89E650092B98B /* UIImage+Segmentation.m */,
+				FD9F432215F915500092B98B /* CWTriangleProcessor.h */,
+				FD9F432315F915500092B98B /* CWTriangleProcessor.m */,
 				FD9F42DF15F3BE750092B98B /* Supporting Files */,
 			);
 			path = CathedralWindow;
@@ -293,6 +298,7 @@
 				FD9F42F315F3BE750092B98B /* CWViewController.m in Sources */,
 				FD9F431715F54E610092B98B /* CWWindow.m in Sources */,
 				FD9F432115F89E650092B98B /* UIImage+Segmentation.m in Sources */,
+				FD9F432415F915500092B98B /* CWTriangleProcessor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

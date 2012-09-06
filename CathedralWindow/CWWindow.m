@@ -34,6 +34,7 @@
 #define IMAGE_SIZE 256
 
 #import "UIImage+Segmentation.h"
+#import "CWTriangleProcessor.h"
 
 - (void) setupWithImage:(UIImage*)image
 {
@@ -45,12 +46,19 @@
     glGenBuffers(1, &_vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     
-    CWSegmentationResult result = [image segmentIntoTriangles];
+    CWTriangles result = [image segmentIntoTriangles];
+    
+    CWTriangles newResult = [CWTriangleProcessor rejectTriangles:result withBlock:^BOOL(CWVertex a, CWVertex b, CWVertex c) {
+        return sqrt(a.x*a.x + a.y*a.y)>1;
+    }];
+    
+    free(result.vertices);
+    result = newResult;
     
     _numVertices = result.numberOfVertices;
     
     CWVertex * vertices = result.vertices;
-
+    
     for (int i =0; i< _numVertices; i+=3)
     {
         
@@ -66,7 +74,7 @@
     
     glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*_numVertices, vertices, GL_STATIC_DRAW);
 
-    // TODO: free
+    free(result.vertices);
     
     // and finish
     

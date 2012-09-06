@@ -28,6 +28,7 @@ GLint uniforms[NUM_UNIFORMS];
     GLKMatrix4 _modelViewProjectionMatrix;
     
     CGPoint _pan;
+    float _zoom;
 }
 @property (strong, nonatomic) EAGLContext *context;
 
@@ -119,6 +120,8 @@ GLint uniforms[NUM_UNIFORMS];
     
     glEnable(GL_DEPTH_TEST);
     
+    _zoom = 2.0f;
+    
     self.windows = [NSArray arrayWithObjects:
                     [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(0, 0, 0)],
                     [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(-1, 0, 0)],
@@ -158,6 +161,7 @@ GLint uniforms[NUM_UNIFORMS];
 
     GLKVector3 eye = GLKVector3Make(x, y, z);
     eye = GLKVector3Normalize(eye);
+    eye = GLKVector3MultiplyScalar(eye, _zoom);
     
     glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
 
@@ -168,7 +172,7 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+    glClearColor(0.01f, 0.01f, 0.02f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     

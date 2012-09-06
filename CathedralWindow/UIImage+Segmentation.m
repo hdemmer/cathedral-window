@@ -76,9 +76,9 @@ float cwRandom(float min, float max)
     return newImage;
 }
 
-- (CWSegmentationResult)segmentIntoTriangles
+- (CWTriangles)segmentIntoTriangles
 {
-    CWSegmentationResult result;
+    CWTriangles result;
     
     CGImageRef imageRef = [[self imageByScalingAndCroppingForSize:CGSizeMake(IMAGE_SIZE, IMAGE_SIZE)] CGImage];
     NSUInteger width = CGImageGetWidth(imageRef);
@@ -236,31 +236,16 @@ float cwRandom(float min, float max)
                 vertices[baseIndex+i].g=g+cwRandom(0.0, 0.1);;
                 vertices[baseIndex+i].b=b+cwRandom(0.0, 0.1);;
             }
-            
-            /*
-            vertices[baseIndex+0].x = -0.5f+nodes[0][x+1+y*gridWidth];
-            vertices[baseIndex+0].y = -0.5f+nodes[1][x+1+y*gridWidth];
-            
-            vertices[baseIndex+1].x = -0.5f+nodes[0][x+y*gridWidth];
-            vertices[baseIndex+1].y = -0.5f+nodes[1][x+y*gridWidth];
-            
-            vertices[baseIndex+2].x = -0.5f+nodes[0][x+1+(y+1)*gridWidth];
-            vertices[baseIndex+2].y = -0.5f+nodes[1][x+1+(y+1)*gridWidth];
-            
-            vertices[baseIndex+3].x = -0.5f+nodes[0][x+1+(y+1)*gridWidth];
-            vertices[baseIndex+3].y = -0.5f+nodes[1][x+1+(y+1)*gridWidth];
-            
-            vertices[baseIndex+4].x = -0.5f+nodes[0][x+y*gridWidth];
-            vertices[baseIndex+4].y = -0.5f+nodes[1][x+y*gridWidth];
-            
-            vertices[baseIndex+5].x = -0.5f+nodes[0][x+(y+1)*gridWidth];
-            vertices[baseIndex+5].y = -0.5f+nodes[1][x+(y+1)*gridWidth];
-             */
         }
     }
 
     result.numberOfVertices = numVertices;
     result.vertices = vertices;
+    
+    free(rawData);
+    
+    free(hueData);
+    free(sobelData);
     
     return result;
 }

@@ -9,13 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
-typedef struct {
-    CWVertex *vertices;
-    int numberOfVertices;
-} CWSegmentationResult;
-
 @interface UIImage (Segmentation)
 
-- (CWSegmentationResult)segmentIntoTriangles;
+- (CWTriangles)segmentIntoTriangles;
 
 @end
