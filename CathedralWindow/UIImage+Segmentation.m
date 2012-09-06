@@ -219,9 +219,9 @@ float cwRandom(float min, float max)
             
             for (int i=0; i<3; i++)
             {
-                vertices[baseIndex+i].r=r+cwRandom(0.0, 0.1);;
-                vertices[baseIndex+i].g=g+cwRandom(0.0, 0.1);;
-                vertices[baseIndex+i].b=b+cwRandom(0.0, 0.1);;
+                vertices[baseIndex+i].r=r+cwRandom(0.0, 0.1);
+                vertices[baseIndex+i].g=g+cwRandom(0.0, 0.1);
+                vertices[baseIndex+i].b=b+cwRandom(0.0, 0.1);
             }
             
             baseIndex+=3;
@@ -230,7 +230,6 @@ float cwRandom(float min, float max)
             g = (g+vertices[baseIndex+0].g+vertices[baseIndex+1].g+vertices[baseIndex+2].g) / 4.0f;
             b = (b+vertices[baseIndex+0].b+vertices[baseIndex+1].b+vertices[baseIndex+2].b) / 4.0f;
 
-                        
             for (int i=0; i<3; i++)
             {
                 vertices[baseIndex+i].r=r+cwRandom(0.0, 0.1);;

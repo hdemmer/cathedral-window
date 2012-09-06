@@ -25,6 +25,8 @@ GLint uniforms[NUM_UNIFORMS];
     GLuint _program;
     
     GLKMatrix4 _modelViewProjectionMatrix;
+    
+    CGPoint _pan;
 }
 @property (strong, nonatomic) EAGLContext *context;
 
@@ -42,33 +44,36 @@ GLint uniforms[NUM_UNIFORMS];
 @synthesize context = _context;
 @synthesize windows=_windows;
 
-- (void) longPressRecognizerFired:(UILongPressGestureRecognizer*)longPressRecognizer
-{
-    if (longPressRecognizer.state == UIGestureRecognizerStateEnded)
-    {
-        CGPoint location = [longPressRecognizer locationInView:self.view];
-        NSLog(@"%f %f", location.x, location.y);
+#define MAX_PAN 300
 
-        
-        for (CWWindow * window in self.windows)
-        {                        
-            GLKVector4 res = GLKMatrix4MultiplyVector4(_modelViewProjectionMatrix, GLKVector4Make(window.origin.x, window.origin.y, -4.0,1.0));
-            
-            float windowX = (1.0f + res.x) * 0.5f;
-            float windowY = (1.0f + res.y) * 0.5f;
-            
-            NSLog(@"%f , %f", windowX, windowY);
-        }
-    }
+- (void) panGestureRecognizerFired:(UIPanGestureRecognizer*)panGestureRecognizer
+{
+    CGPoint pan = [panGestureRecognizer translationInView:self.view];
+    [panGestureRecognizer setTranslation:CGPointZero inView:self.view];
+
+    _pan.x += pan.x;
+    _pan.y += pan.y;
+
+    if (_pan.x < -MAX_PAN)
+        _pan.x = -MAX_PAN;
+
+    if (_pan.x > MAX_PAN)
+        _pan.x = MAX_PAN;
+
+    if (_pan.y < -MAX_PAN)
+        _pan.y = -MAX_PAN;
+
+    if (_pan.y > MAX_PAN)
+        _pan.y = MAX_PAN;
+
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    UILongPressGestureRecognizer * longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressRecognizerFired:)];
-    longPressRecognizer.minimumPressDuration = 0.0;
-    [self.view addGestureRecognizer:longPressRecognizer];
+    UIPanGestureRecognizer * panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizerFired:)];
+    [self.view addGestureRecognizer:panGestureRecognizer];
     
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     
@@ -144,7 +149,16 @@ GLint uniforms[NUM_UNIFORMS];
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
     
-    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeLookAt(0, 0, 2, 0, 0, 0, 0, 1, 0);
+    
+    float x = -_pan.x / MAX_PAN;
+    float y = _pan.y / MAX_PAN;
+    
+    float z = 0.4;
+
+    GLKVector3 eye = GLKVector3Make(x, y, z);
+    eye = GLKVector3Normalize(eye);
+
+    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, 0, 0, 0, 0, 1, 0);
         
     _modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
 }
