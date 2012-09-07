@@ -236,6 +236,7 @@ GLint uniforms[NUM_UNIFORMS];
     glBindAttribLocation(_program, ATTRIB_VERTEX, "position");
     glBindAttribLocation(_program, ATTRIB_COLOR, "diffuse");
     glBindAttribLocation(_program, ATTRIB_TEXCOORDS, "texCoords");
+    glBindAttribLocation(_program, ATTRIB_LOCALCOORDS, "localCoords");
     
     // Link program.
     if (![self linkProgram:_program]) {

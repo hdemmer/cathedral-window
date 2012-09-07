@@ -70,8 +70,18 @@
     
     for (int i =0; i< _numVertices; i+=3)
     {
-        
-    }
+        vertices[i].l1 = 1;
+        vertices[i].l2 = 0;
+        vertices[i].l3 = 0;
+
+        vertices[i+1].l1 = 0;
+        vertices[i+1].l2 = 1;
+        vertices[i+1].l3 = 0;
+
+        vertices[i+2].l1 = 0;
+        vertices[i+2].l2 = 0;
+        vertices[i+2].l3 = 1;
+}
 
     
     for (int i =0; i< _numVertices; i++)
@@ -91,11 +101,13 @@
     // and finish
     
     glEnableVertexAttribArray(ATTRIB_VERTEX);
-    glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 40, 0);
+    glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 48, 0);
     glEnableVertexAttribArray(ATTRIB_COLOR);
-    glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 40, BUFFER_OFFSET(12));
+    glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(12));
     glEnableVertexAttribArray(ATTRIB_TEXCOORDS);
-    glVertexAttribPointer(ATTRIB_TEXCOORDS, 4, GL_FLOAT, GL_FALSE, 40, BUFFER_OFFSET(24));
+    glVertexAttribPointer(ATTRIB_TEXCOORDS, 2, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(24));
+    glEnableVertexAttribArray(ATTRIB_LOCALCOORDS);
+    glVertexAttribPointer(ATTRIB_LOCALCOORDS, 4, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(32));
     
     glBindVertexArrayOES(0);
 

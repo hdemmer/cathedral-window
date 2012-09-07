@@ -6,12 +6,22 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-varying lowp vec4 colorVarying;
-varying lowp vec4 texCoords2;
+varying lowp vec3 colorBaseV;
+varying lowp vec3 colorGlowV;
+varying lowp float intensityDirectV;
+varying lowp vec2 texCoordsV;
+varying lowp vec4 localCoordsV;
+
+uniform lowp vec3 sunColor;
 uniform sampler2D Texture;
 
 void main()
 {
-    lowp float luma = texture2D(Texture,texCoords2.xy).x;
-    gl_FragColor = colorVarying * (luma + 0.5)/1.5;
+    mediump float thickness = 2.0*localCoordsV.x*2.0*localCoordsV.y* localCoordsV.z * 2.0;
+    lowp float lead = clamp(thickness*(gl_FragCoord.w) * gl_FragCoord.w*8.0,0.5*(1.0-gl_FragCoord.w),1.0);
+    lowp float luma = (texture2D(Texture,texCoordsV).x + 0.5)/1.5;
+    
+    lowp vec3 result = lead * (luma * (colorBaseV + colorGlowV) + intensityDirectV * mix(colorGlowV,sunColor,0.5*thickness));
+    
+    gl_FragColor = vec4(result,1.0);
 }

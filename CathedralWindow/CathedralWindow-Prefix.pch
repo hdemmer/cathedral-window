@@ -21,6 +21,7 @@ enum
     ATTRIB_VERTEX,
     ATTRIB_COLOR,
     ATTRIB_TEXCOORDS,
+    ATTRIB_LOCALCOORDS,
     NUM_ATTRIBUTES
 };
 
@@ -33,8 +34,10 @@ typedef struct {
     float b;
     float u;
     float v;
-    float s;
-    float t;
+    float l1;
+    float l2;
+    float l3;
+    float l4;
 } CWVertex;
 
 typedef struct {

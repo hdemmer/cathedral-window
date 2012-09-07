@@ -8,10 +8,15 @@
 
 attribute vec3 position;
 attribute vec3 diffuse;
-attribute vec4 texCoords;
+attribute vec2 texCoords;
+attribute vec4 localCoords;
 
-varying lowp vec4 colorVarying;
-varying lowp vec4 texCoords2;
+varying lowp vec3 colorBaseV;
+varying lowp vec3 colorGlowV;
+varying lowp float intensityDirectV;
+
+varying lowp vec2 texCoordsV;
+varying lowp vec4 localCoordsV;
 
 uniform mat4 modelViewProjectionMatrix;
 
@@ -19,7 +24,6 @@ uniform vec3 eyePosition;
 
 uniform float ambientIntensity;
 uniform vec3 sunVector;
-uniform vec3 sunColor;
 
 void main()
 {
@@ -38,11 +42,13 @@ void main()
     
     vec3 base = diffuse * ambientIntensity;
     vec3 colorGlow = mix(diffuse,luma*vec3(1.0,1.0,1.0), -1.0) * glowCoeff;  // kick out sat
-    vec3 direct = sunAngle * luma*luma * sunColor;
+    intensityDirectV = sunAngle * luma*luma;
 
-    colorVarying = vec4(base + colorGlow + direct,1.0);
+    colorBaseV = base;
+    colorGlowV = colorGlow;
     
-    texCoords2 = texCoords;
+    texCoordsV = texCoords;
+    localCoordsV=localCoords;
     
     gl_Position = modelViewProjectionMatrix * vec4(position,1.0);
 }
