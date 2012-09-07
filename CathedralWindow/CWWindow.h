@@ -22,7 +22,7 @@
 
 @property (nonatomic, assign) GLKVector3 origin;
 
-- (id)initWithImage:(UIImage*)image origin:(GLKVector3)origin andWindowShape:(CWWindowShape*)shape;
+- (id)initWithImage:(UIImage*)image origin:(GLKVector3)origin scale:(float)scale andWindowShape:(CWWindowShape*)shape;
 
 - (void) draw;
 

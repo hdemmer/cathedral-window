@@ -15,7 +15,7 @@
     float u = 2.0f*(vertex.x - 0.5f);
     float v = 2.0f*(vertex.y - 0.5f);
     
-    return sqrt(u*u+v*v)<1; 
+    return sqrt(u*u+v*v)<0.8;
 }
 
 // a must be contained, b must not

@@ -76,11 +76,11 @@ GLint uniforms[NUM_UNIFORMS];
     _zoom /= [pinchGestureRecognizer scale];
     pinchGestureRecognizer.scale = 1.0f;
     
-    if (_zoom >2.0)
-        _zoom = 2.0;
+    if (_zoom >5.0)
+        _zoom = 5.0;
         
     if (_zoom < 0.3)
-        _zoom = 0.3;
+        _zoom = 3.3;
 }
 
 - (void)viewDidLoad
@@ -139,15 +139,28 @@ GLint uniforms[NUM_UNIFORMS];
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_SRC_COLOR);
     
-    _zoom = 2.0f;
+    _zoom = 4.0f;
     
     CWWindowShape * shape = [[CWWindowShape alloc] init];
     
-    self.windows = [NSArray arrayWithObjects:
-                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(0, 0, 0) andWindowShape:shape],
-                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(-1, 0, 0) andWindowShape:shape],
-                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(1, 0, 0) andWindowShape:shape],
-                    nil];
+    NSMutableArray * mutableWindows = [NSMutableArray arrayWithCapacity:24];
+    
+    [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(0, 0, 0) scale:1.25 andWindowShape:shape]];
+     
+     for (int i = 0; i < 12; i++)
+     {
+         float t = i/6.0f * M_PI;
+         GLKVector3 origin = GLKVector3Make(cosf(t), sin(t), 0);
+         
+         GLKVector3 origin2 = GLKVector3Make(0.68*cosf(t+M_PI_2 / 6.0f), 0.68*sin(t+M_PI_2 / 6.0f), 0);
+
+         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:origin scale:0.5 andWindowShape:shape]];
+
+         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:origin2 scale:0.35 andWindowShape:shape]];
+         
+     }
+    
+    self.windows = [NSArray arrayWithArray:mutableWindows];
 }
 
 - (void)tearDownGL
@@ -206,7 +219,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     t = 2;
     
-    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.0*sinf(t),sinf(t));
+    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), -0.4*sinf(t),sinf(t));
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
 
     glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.2+0.05*cosf(t));
