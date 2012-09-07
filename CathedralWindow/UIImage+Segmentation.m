@@ -163,7 +163,7 @@ float cwRandom(float min, float max)
         for (int y=0; y<gridWidth; y++)
         {
             int shift = y % 2 + 1;
-            int cx = x*gridStep+ shift*(gridStep / 2);
+            int cx = x*gridStep+ gridStep / 2;
             int cy = y*gridStep+ gridStep / 2;
             
             int mx = cx;
@@ -201,7 +201,7 @@ float cwRandom(float min, float max)
     }
     
     
-    int numVertices = gridWidth*gridWidth*6;
+    int numVertices = (gridWidth-1)*(gridWidth-1)*6;
     
     CWVertex * vertices = malloc(numVertices * sizeof(CWVertex));
     
@@ -209,7 +209,7 @@ float cwRandom(float min, float max)
     {
         for (int y=0; y<gridWidth-1; y++)
         {
-            int baseIndex = 6*(x+gridWidth*y);
+            int baseIndex = 6*(x+(gridWidth-1)*y);
             
             
             vertices[baseIndex+0] = nodes[x+1+y*gridWidth];
