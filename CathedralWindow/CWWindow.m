@@ -56,6 +56,11 @@
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     
     CWTriangles result = [image segmentIntoTriangles];
+    
+    CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:[[CWWindowShape alloc] init]];
+    free(result.vertices);
+    result = newResult;
+
 /*    
     CWTriangles newResult = [CWTriangleProcessor rejectTriangles:result withBlock:^BOOL(CWVertex a, CWVertex b, CWVertex c) {
         return sqrt(a.x*a.x + a.y*a.y)>1;
@@ -68,6 +73,7 @@
     
     CWVertex * vertices = result.vertices;
     
+    // set local coordinates
     for (int i =0; i< _numVertices; i+=3)
     {
         vertices[i].l1 = 1;
@@ -81,9 +87,9 @@
         vertices[i+2].l1 = 0;
         vertices[i+2].l2 = 0;
         vertices[i+2].l3 = 1;
-}
+    }
 
-    
+    // translate and tex coords
     for (int i =0; i< _numVertices; i++)
     {
         vertices[i].u = vertices[i].x;
