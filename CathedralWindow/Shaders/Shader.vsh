@@ -8,8 +8,10 @@
 
 attribute vec3 position;
 attribute vec3 diffuse;
+attribute vec4 texCoords;
 
 varying lowp vec4 colorVarying;
+varying lowp vec4 texCoords2;
 
 uniform mat4 modelViewProjectionMatrix;
 
@@ -39,6 +41,8 @@ void main()
     vec3 direct = sunAngle * luma*luma * sunColor;
 
     colorVarying = vec4(base + colorGlow + direct,1.0);
+    
+    texCoords2 = texCoords;
     
     gl_Position = modelViewProjectionMatrix * vec4(position,1.0);
 }

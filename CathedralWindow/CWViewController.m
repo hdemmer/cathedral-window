@@ -18,6 +18,7 @@ enum
     UNIFORM_SUN_VECTOR,
     UNIFORM_SUN_COLOR,
     UNIFORM_AMBIENT_INTENSITY,
+    UNIFORM_TEXTURE_SAMPLER,
     NUM_UNIFORMS
 };
 GLint uniforms[NUM_UNIFORMS];
@@ -119,6 +120,9 @@ GLint uniforms[NUM_UNIFORMS];
     [self loadShaders];
     
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_SRC_COLOR);
     
     _zoom = 2.0f;
     
@@ -181,12 +185,15 @@ GLint uniforms[NUM_UNIFORMS];
     
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
     
-    float t = self.timeSinceFirstResume;
+    float t = 5;    //self.timeSinceFirstResume;
     
     glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.0*sinf(t),sinf(t));
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
 
     glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.2+0.05*cosf(t));
+    
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(uniforms[UNIFORM_TEXTURE_SAMPLER], 0);
 
     for (CWWindow * window in self.windows)
     {
@@ -228,6 +235,7 @@ GLint uniforms[NUM_UNIFORMS];
     // This needs to be done prior to linking.
     glBindAttribLocation(_program, ATTRIB_VERTEX, "position");
     glBindAttribLocation(_program, ATTRIB_COLOR, "diffuse");
+    glBindAttribLocation(_program, ATTRIB_TEXCOORDS, "texCoords");
     
     // Link program.
     if (![self linkProgram:_program]) {
@@ -255,6 +263,8 @@ GLint uniforms[NUM_UNIFORMS];
     uniforms[UNIFORM_SUN_VECTOR] = glGetUniformLocation(_program, "sunVector");
     uniforms[UNIFORM_SUN_COLOR] = glGetUniformLocation(_program, "sunColor");
     uniforms[UNIFORM_AMBIENT_INTENSITY] = glGetUniformLocation(_program, "ambientIntensity");
+    
+    uniforms[UNIFORM_TEXTURE_SAMPLER] = glGetUniformLocation(_program, "Texture");
     
     // Release vertex and fragment shaders.
     if (vertShader) {

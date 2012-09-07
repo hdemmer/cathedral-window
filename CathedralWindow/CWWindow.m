@@ -30,19 +30,28 @@
     return self;
 }
 
-
 #define IMAGE_SIZE 256
 
 #import "UIImage+Segmentation.h"
 #import "CWTriangleProcessor.h"
 
+
 - (void) setupWithImage:(UIImage*)image
-{
-    // now setup the buffers
+{        
+    // tex
+    
+    glGenTextures(1, &_texture);
+    glBindTexture(GL_TEXTURE_2D, _texture);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
+        
+    // triangles
     
     glGenVertexArraysOES(1, &_vertexArray);
     glBindVertexArrayOES(_vertexArray);
-    
+
     glGenBuffers(1, &_vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     
@@ -67,6 +76,9 @@
     
     for (int i =0; i< _numVertices; i++)
     {
+        vertices[i].u = vertices[i].x;
+        vertices[i].v = vertices[i].y;
+        
         vertices[i].x += -0.5 + self.origin.x;
         vertices[i].y += -0.5 + self.origin.y;
         vertices[i].z += self.origin.z;
@@ -79,9 +91,11 @@
     // and finish
     
     glEnableVertexAttribArray(ATTRIB_VERTEX);
-    glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 24, 0);
+    glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 40, 0);
     glEnableVertexAttribArray(ATTRIB_COLOR);
-    glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 24, BUFFER_OFFSET(12));
+    glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 40, BUFFER_OFFSET(12));
+    glEnableVertexAttribArray(ATTRIB_TEXCOORDS);
+    glVertexAttribPointer(ATTRIB_TEXCOORDS, 4, GL_FLOAT, GL_FALSE, 40, BUFFER_OFFSET(24));
     
     glBindVertexArrayOES(0);
 
@@ -89,6 +103,8 @@
 
 - (void)draw
 {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _texture);
     glBindVertexArrayOES(_vertexArray);
     glDrawArrays(GL_TRIANGLES, 0, _numVertices);
 

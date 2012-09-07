@@ -142,6 +142,8 @@ float cwRandom(float min, float max)
         }
     }
     
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, IMAGE_SIZE, IMAGE_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, rawData);
+    
     // calculate nodes
     
     int gridStep = GRID_STEP;
