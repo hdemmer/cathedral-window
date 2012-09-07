@@ -10,6 +10,7 @@
 
 #import <GLKit/GLKit.h>
 
+#import "CWWindowShape.h"
 
 @interface CWWindow : NSObject
 {    
@@ -21,7 +22,7 @@
 
 @property (nonatomic, assign) GLKVector3 origin;
 
-- (id)initWithImage:(UIImage*)image origin:(GLKVector3)origin;
+- (id)initWithImage:(UIImage*)image origin:(GLKVector3)origin andWindowShape:(CWWindowShape*)shape;
 
 - (void) draw;
 

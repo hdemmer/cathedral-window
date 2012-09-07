@@ -12,18 +12,21 @@
 {
     int _numVertices;
 }
+@property (nonatomic,strong) CWWindowShape*windowShape;
 @end
 
 @implementation CWWindow
 @synthesize origin=_origin;
+@synthesize windowShape=_windowShape;
 
-- (id)initWithImage:(UIImage *)image origin:(GLKVector3)origin
+- (id)initWithImage:(UIImage *)image origin:(GLKVector3)origin andWindowShape:(CWWindowShape *)shape
 {
     self = [super init];
     
     if (self)
     {
         self.origin = origin;
+        self.windowShape = shape;
         [self setupWithImage:image];
     }
     
@@ -57,7 +60,7 @@
     
     CWTriangles result = [image segmentIntoTriangles];
     
-    CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:[[CWWindowShape alloc] init]];
+    CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:self.windowShape];
     free(result.vertices);
     result = newResult;
 

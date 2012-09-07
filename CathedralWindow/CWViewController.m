@@ -141,10 +141,12 @@ GLint uniforms[NUM_UNIFORMS];
     
     _zoom = 2.0f;
     
+    CWWindowShape * shape = [[CWWindowShape alloc] init];
+    
     self.windows = [NSArray arrayWithObjects:
-                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(0, 0, 0)],
-                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(-1, 0, 0)],
-                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(1, 0, 0)],
+                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(0, 0, 0) andWindowShape:shape],
+                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(-1, 0, 0) andWindowShape:shape],
+                    [[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(1, 0, 0) andWindowShape:shape],
                     nil];
 }
 
