@@ -170,7 +170,7 @@ float cwRandom(float min, float max)
             int my = cy;
             int sobelAtM = 0;
             
-            for (int sx=x*gridStep; sx<(x+1)*gridStep; sx++)
+            for (int sx=x*gridStep+shift*gridStep*0.5f; sx<(x+1)*gridStep+shift*gridStep*0.5f; sx++)
             {
                 for (int sy=y*gridStep; sy<(y+1)*gridStep; sy++)
                 {
@@ -188,7 +188,7 @@ float cwRandom(float min, float max)
             
             nodes[x+gridWidth*y].x = mx/(float)IMAGE_SIZE;    // x
             nodes[x+gridWidth*y].y = my/(float)IMAGE_SIZE;    // x
-            nodes[x+gridWidth*y].z = 0;
+            nodes[x+gridWidth*y].z = cwRandom(0, 0.001);
             
             unsigned char r = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel];
             unsigned char g = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+1];
@@ -199,7 +199,6 @@ float cwRandom(float min, float max)
 
         }
     }
-    
     
     int numVertices = (gridWidth-1)*(gridWidth-1)*6;
     
