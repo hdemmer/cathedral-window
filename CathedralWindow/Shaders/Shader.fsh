@@ -18,7 +18,7 @@ uniform sampler2D Texture;
 void main()
 {
     mediump float thickness = 2.0*localCoordsV.x*2.0*localCoordsV.y* localCoordsV.z * 2.0;
-    lowp float lead = clamp(thickness*(gl_FragCoord.w) * gl_FragCoord.w*8.0,0.5*(1.0-gl_FragCoord.w),1.0);
+    lowp float lead = clamp(thickness*8.0,0.2+0.5*(1.0-(gl_FragCoord.w*gl_FragCoord.w)),1.0);
     lowp float luma = (texture2D(Texture,texCoordsV).x + 0.5)/1.5;
     
     lowp vec3 result = lead * (luma * (colorBaseV + colorGlowV) + intensityDirectV * mix(colorGlowV,sunColor,0.5*thickness));
