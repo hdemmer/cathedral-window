@@ -12,6 +12,6 @@ uniform sampler2D Texture;
 
 void main()
 {
-    lowp float luma = dot(texture2D(Texture,texCoords2.xy).xyz,vec3(0.299,0.587,0.114));
-    gl_FragColor = colorVarying * (luma + 1.0)*0.5;
+    lowp float luma = texture2D(Texture,texCoords2.xy).x;
+    gl_FragColor = colorVarying * (luma + 0.5)/1.5;
 }

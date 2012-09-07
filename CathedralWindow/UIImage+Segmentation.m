@@ -99,6 +99,7 @@ float cwRandom(float min, float max)
     CGContextRelease(context);
 
     unsigned char *hueData = (unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char));
+    unsigned char *lumaData = (unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char));
     
     for (int x = 0; x < IMAGE_SIZE; x++)
     {
@@ -111,6 +112,10 @@ float cwRandom(float min, float max)
             float hue = atan2f(sqrtf(3)*(g-b), 2.0f*(r-g-b));
             
             hueData[x+y*IMAGE_SIZE] = (hue * 255.0);
+            
+            float luma = 0.299*r+0.587*g+0.114*b;
+            
+            lumaData[x+y*IMAGE_SIZE] = (luma * 255.0);
         }
     }
     
@@ -142,7 +147,7 @@ float cwRandom(float min, float max)
         }
     }
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, IMAGE_SIZE, IMAGE_SIZE, 0, GL_RGBA, GL_UNSIGNED_BYTE, rawData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, IMAGE_SIZE, IMAGE_SIZE, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, lumaData);
     
     // calculate nodes
     
@@ -247,6 +252,7 @@ float cwRandom(float min, float max)
     free(rawData);
     
     free(hueData);
+    free(lumaData);
     free(sobelData);
     
     return result;
