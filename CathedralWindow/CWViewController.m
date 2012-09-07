@@ -71,12 +71,27 @@ GLint uniforms[NUM_UNIFORMS];
 
 }
 
+- (void) pinchGestureRecognizerFired:(UIPinchGestureRecognizer*)pinchGestureRecognizer
+{
+    _zoom /= [pinchGestureRecognizer scale];
+    pinchGestureRecognizer.scale = 1.0f;
+    
+    if (_zoom >2.0)
+        _zoom = 2.0;
+        
+    if (_zoom < 0.3)
+        _zoom = 0.3;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     UIPanGestureRecognizer * panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizerFired:)];
     [self.view addGestureRecognizer:panGestureRecognizer];
+    
+    UIPinchGestureRecognizer * pinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchGestureRecognizerFired:)];
+    [self.view addGestureRecognizer:pinchGestureRecognizer];
     
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     
@@ -185,7 +200,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
     
-    float t = 5;    //self.timeSinceFirstResume;
+    float t = self.timeSinceFirstResume;
     
     glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.0*sinf(t),sinf(t));
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
