@@ -202,6 +202,8 @@ GLint uniforms[NUM_UNIFORMS];
     
     float t = self.timeSinceFirstResume;
     
+    t = 2;
+    
     glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), 0.0*sinf(t),sinf(t));
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
 

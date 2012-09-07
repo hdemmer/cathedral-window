@@ -44,8 +44,8 @@
     glBindTexture(GL_TEXTURE_2D, _texture);
     
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
         
     // triangles
     
@@ -56,14 +56,14 @@
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     
     CWTriangles result = [image segmentIntoTriangles];
-    
+/*    
     CWTriangles newResult = [CWTriangleProcessor rejectTriangles:result withBlock:^BOOL(CWVertex a, CWVertex b, CWVertex c) {
         return sqrt(a.x*a.x + a.y*a.y)>1;
     }];
     
     free(result.vertices);
     result = newResult;
-    
+  */  
     _numVertices = result.numberOfVertices;
     
     CWVertex * vertices = result.vertices;

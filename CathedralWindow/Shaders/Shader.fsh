@@ -23,5 +23,7 @@ void main()
     
     lowp vec3 result = lead * (luma * (colorBaseV + colorGlowV) + intensityDirectV * mix(colorGlowV,sunColor,0.5*thickness));
     
+    //result = intensityDirectV * vec3(1.0,1.0,1.0);
+    
     gl_FragColor = vec4(result,1.0);
 }
