@@ -13,7 +13,7 @@ attribute vec4 localCoords;
 
 varying lowp vec3 colorBaseV;
 varying lowp vec3 colorGlowV;
-varying lowp float intensityDirectV;
+varying mediump float intensityDirectV;
 
 varying lowp vec2 texCoordsV;
 varying lowp vec4 localCoordsV;
@@ -29,13 +29,14 @@ void main()
 {
     vec3 normal = vec3(0.0,0.0,1.0);
     
-    float sunAngle = clamp((dot(normalize(sunVector), normalize(normalize(eyePosition)*4.0-position))+1.0)*0.25,0.0,1.0);
+    float sunAngle = clamp((dot(normalize(sunVector), normalize(position-eyePosition))+1.0)*0.25,0.0,1.0);
+    //clamp((dot(normalize(sunVector), normalize(normalize(eyePosition)*4.0-position))+1.0)*0.25,0.0,1.0);
         
     float sunAngleToNormal = dot(normalize(sunVector), normal);
     
     float glowCoeff = (clamp(sunAngleToNormal,0.0,1.0) + sunAngle)*0.5;
 
-    sunAngle = clamp(sunAngle-0.46,0.0,1.0)*50.0;
+    sunAngle = clamp(sunAngle-0.46,0.0,1.0)*30.0+ clamp(sunAngle-0.4995,0.0,1.0)*3000.0;
     sunAngle = sunAngle * sunAngle;
     
     float luma = dot(diffuse, vec3(0.299,0.587,0.114));

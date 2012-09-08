@@ -225,12 +225,12 @@ GLint uniforms[NUM_UNIFORMS];
     
     float t = self.timeSinceFirstResume;
     
-    t = 2;
+    t = 4;
     
     glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), -0.4*sinf(t),sinf(t));
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
 
-    glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.2+0.05*cosf(t));
+    glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.3+0.1*sinf(t));
     
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(uniforms[UNIFORM_TEXTURE_SAMPLER], 0);
