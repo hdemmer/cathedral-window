@@ -221,6 +221,15 @@
         }
     }
     
+    for (int x=0; x<gridWidth; x++)
+    {
+        nodes[x].y=0.0f;
+        nodes[x*gridWidth].y=0.0f;
+        
+        nodes[x + (gridWidth-1)*gridWidth].y=1.0f;
+        nodes[(gridWidth-1)+x*gridWidth].x=1.0f;
+    }
+    
     int numVertices = (gridWidth-1)*(gridWidth-1)*6;
     
     CWVertex * vertices = malloc(numVertices * sizeof(CWVertex));
@@ -310,6 +319,7 @@ float cwRandom(float min, float max)
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     
     CWTriangles result = [self segmentIntoTriangles:image];
+    
     
     CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:self.windowShape];
     free(result.vertices);
