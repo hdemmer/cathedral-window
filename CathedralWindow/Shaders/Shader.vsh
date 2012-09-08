@@ -41,7 +41,7 @@ void main()
     float luma = dot(diffuse, vec3(0.299,0.587,0.114));
     
     vec3 base = diffuse * ambientIntensity;
-    vec3 colorGlow = mix(diffuse,luma*vec3(1.0,1.0,1.0), -1.0) * glowCoeff;  // kick out sat
+    vec3 colorGlow = mix(diffuse,luma*vec3(1.0,1.0,1.0), -1.5) * glowCoeff;  // kick out sat
     intensityDirectV = sunAngle * luma*luma;
 
     colorBaseV = base;
