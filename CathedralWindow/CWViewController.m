@@ -145,7 +145,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     NSMutableArray * mutableWindows = [NSMutableArray arrayWithCapacity:24];
     
-    [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(0, 0, 0) scale:1.2 andWindowShape:shape]];
+    [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"Ronan.jpg"] origin:GLKVector3Make(0, 0, 0) scale:1.2 andWindowShape:shape]];
      
      for (int i = 0; i < 12; i++)
      {

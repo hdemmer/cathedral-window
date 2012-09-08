@@ -21,9 +21,7 @@ void main()
     lowp float lead = clamp(thickness*8.0,0.2+0.5*(1.0-(gl_FragCoord.w*gl_FragCoord.w)),1.0);
     lowp float luma = (texture2D(Texture,texCoordsV).x + 0.5)/1.5;
     
-    lowp vec3 result = lead * (luma * (colorBaseV + colorGlowV) + intensityDirectV * mix(colorGlowV,sunColor,0.5*thickness));
-    
-    //result = intensityDirectV * vec3(1.0,1.0,1.0);
+    lowp vec3 result = lead * (luma * (colorBaseV*0.2 + 0.8*colorGlowV) + intensityDirectV * mix(colorGlowV,sunColor,0.5*thickness));
     
     gl_FragColor = vec4(result,1.0);
 }

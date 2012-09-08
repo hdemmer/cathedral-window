@@ -214,12 +214,12 @@
             nodes[x+gridWidth*y].y = my/(float)IMAGE_SIZE;    // x
             nodes[x+gridWidth*y].z = cwRandom(0, 0.001);
             
-            unsigned char r = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel];
-            unsigned char g = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+1];
-            unsigned char b = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+2];
-            nodes[x+gridWidth*y].r = r / 255.0f +cwRandom(0.0, 0.1);
-            nodes[x+gridWidth*y].g = g / 255.0f +cwRandom(0.0, 0.1);
-            nodes[x+gridWidth*y].b = b / 255.0f +cwRandom(0.0, 0.1);
+            float r = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel]/ 255.0f;
+            float g = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+1]/ 255.0f;
+            float b = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+2]/ 255.0f;
+            nodes[x+gridWidth*y].r = r +cwRandom(0.0, 0.1);
+            nodes[x+gridWidth*y].g = g +cwRandom(0.0, 0.1);
+            nodes[x+gridWidth*y].b = b+cwRandom(0.0, 0.1);
             
         }
     }
