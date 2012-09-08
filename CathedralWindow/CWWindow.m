@@ -172,7 +172,10 @@
     
     // calculate nodes
     
-    int gridStep = GRID_STEP / _scale;
+    int gridStep = GRID_STEP / (float)_scale;
+    if (gridStep > 16)
+        gridStep = 16;
+    
     int gridWidth = IMAGE_SIZE / (float)gridStep;
     
     int numNodes = gridWidth * gridWidth;

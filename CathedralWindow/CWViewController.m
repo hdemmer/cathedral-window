@@ -158,11 +158,11 @@ GLint uniforms[NUM_UNIFORMS];
          
          [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:origin scale:1.0 andWindowShape:shape]];
          
-         GLKVector3 origin2 = GLKVector3Make(1.38*cosf(t+M_PI_2 / 6.0f), 1.38*sin(t+M_PI_2 / 6.0f), 0);
+         GLKVector3 origin2 = GLKVector3Make(1.37*cosf(t+M_PI_2 / 6.0f), 1.37*sin(t+M_PI_2 / 6.0f), 0);
          
          shape.shapeType = CWWST_ROUND;
          
-         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:origin2 scale:0.24 andWindowShape:shape]];
+         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"smallWindow.png"] origin:origin2 scale:0.25 andWindowShape:shape]];
          
 
          

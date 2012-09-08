@@ -28,6 +28,7 @@
 		FD9F431A15F5556A0092B98B /* splash.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FD9F431915F5556A0092B98B /* splash.jpg */; };
 		FD9F432415F915500092B98B /* CWTriangleProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F432315F915500092B98B /* CWTriangleProcessor.m */; };
 		FD9F432715FA48260092B98B /* CWWindowShape.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F432615FA48260092B98B /* CWWindowShape.m */; };
+		FD9F432915FB44720092B98B /* smallWindow.png in Resources */ = {isa = PBXBuildFile; fileRef = FD9F432815FB44720092B98B /* smallWindow.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		FD9F432315F915500092B98B /* CWTriangleProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWTriangleProcessor.m; sourceTree = "<group>"; };
 		FD9F432515FA48260092B98B /* CWWindowShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWWindowShape.h; sourceTree = "<group>"; };
 		FD9F432615FA48260092B98B /* CWWindowShape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWWindowShape.m; sourceTree = "<group>"; };
+		FD9F432815FB44720092B98B /* smallWindow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smallWindow.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +136,7 @@
 		FD9F42DE15F3BE750092B98B /* CathedralWindow */ = {
 			isa = PBXGroup;
 			children = (
+				FD9F432815FB44720092B98B /* smallWindow.png */,
 				FD9F431915F5556A0092B98B /* splash.jpg */,
 				FD9F42E715F3BE750092B98B /* CWAppDelegate.h */,
 				FD9F42E815F3BE750092B98B /* CWAppDelegate.m */,
@@ -259,6 +262,7 @@
 				FD9F42EE15F3BE750092B98B /* Shader.fsh in Resources */,
 				FD9F42F015F3BE750092B98B /* Shader.vsh in Resources */,
 				FD9F431A15F5556A0092B98B /* splash.jpg in Resources */,
+				FD9F432915FB44720092B98B /* smallWindow.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
