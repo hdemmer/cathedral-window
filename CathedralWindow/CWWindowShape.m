@@ -9,13 +9,36 @@
 #import "CWWindowShape.h"
 
 @implementation CWWindowShape
+@synthesize rotation=_rotation;
+@synthesize shapeType=_shapeType;
 
 - (BOOL)containsVertex:(CWVertex)vertex
 {
     float u = 2.0f*(vertex.x - 0.5f);
     float v = 2.0f*(vertex.y - 0.5f);
     
-    return sqrt(u*u+v*v)<0.8;
+    if (self.shapeType == CWWST_ROUND)
+    {    
+        return sqrt(u*u+v*v)<0.8;
+    } else if (self.shapeType = CWWST_FIRST)
+    {
+        GLKMatrix3 rot = GLKMatrix3MakeRotation(-M_PI_2-self.rotation, 0, 0, 1);
+        
+        GLKVector3 rotatedPoint = GLKMatrix3MultiplyVector3(rot, GLKVector3Make(u, v, 0));
+        
+        float excenter = 2;
+        
+        u = rotatedPoint.x;
+        v = rotatedPoint.y;
+                
+        float d = sqrtf(u*u+(excenter-v)*(excenter-v));
+        float a = atan2f((excenter-v), u);
+        
+        BOOL inSegment = (d>excenter-0.65)&&(d<excenter+0.65-fabsf((a-M_PI_2)))&&fabsf(a-M_PI_2)<M_PI/(13.5f - 0.6*(d - excenter));
+        
+        return inSegment || sqrtf(u*u+(0.65-v)*(0.65-v))<0.29 || sqrtf(u*u+(-0.5-v)*(-0.5-v))<0.4;
+    }
+    return NO;
 }
 
 // a must be contained, b must not

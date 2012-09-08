@@ -145,18 +145,26 @@ GLint uniforms[NUM_UNIFORMS];
     
     NSMutableArray * mutableWindows = [NSMutableArray arrayWithCapacity:24];
     
-    [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(0, 0, 0) scale:1.25 andWindowShape:shape]];
+    [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:GLKVector3Make(0, 0, 0) scale:1.2 andWindowShape:shape]];
      
      for (int i = 0; i < 12; i++)
      {
+         shape.shapeType = CWWST_FIRST;
+         
          float t = i/6.0f * M_PI;
          GLKVector3 origin = GLKVector3Make(cosf(t), sin(t), 0);
          
-         GLKVector3 origin2 = GLKVector3Make(0.68*cosf(t+M_PI_2 / 6.0f), 0.68*sin(t+M_PI_2 / 6.0f), 0);
+         shape.rotation = t;
+         
+         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:origin scale:1.0 andWindowShape:shape]];
+         
+         GLKVector3 origin2 = GLKVector3Make(1.38*cosf(t+M_PI_2 / 6.0f), 1.38*sin(t+M_PI_2 / 6.0f), 0);
+         
+         shape.shapeType = CWWST_ROUND;
+         
+         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:origin2 scale:0.24 andWindowShape:shape]];
+         
 
-         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:origin scale:0.5 andWindowShape:shape]];
-
-         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:origin2 scale:0.35 andWindowShape:shape]];
          
      }
     
