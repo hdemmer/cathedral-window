@@ -76,11 +76,11 @@ GLint uniforms[NUM_UNIFORMS];
     _zoom /= [pinchGestureRecognizer scale];
     pinchGestureRecognizer.scale = 1.0f;
     
-    if (_zoom >5.0)
-        _zoom = 5.0;
+    if (_zoom >4.0)
+        _zoom = 4.0;
         
-    if (_zoom < 0.3)
-        _zoom = 3.3;
+    if (_zoom < 1.0)
+        _zoom = 1.0;
 }
 
 - (void)viewDidLoad
