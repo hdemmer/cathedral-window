@@ -9,9 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 
+#import "CWWindow.h"
+
 @interface CWViewController : GLKViewController
 
 @property (nonatomic, retain) NSArray * windows;
+
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
 - (IBAction)donePressed:(id)sender;
 - (IBAction)cameraPressed:(id)sender;

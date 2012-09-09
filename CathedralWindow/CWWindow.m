@@ -303,7 +303,7 @@ float cwRandom(float min, float max)
 
 
 - (void) setupWithImage:(UIImage*)image
-{        
+{
     // tex
     
     glGenTextures(1, &_texture);
@@ -386,6 +386,12 @@ float cwRandom(float min, float max)
 
 }
 
+- (void)setImage:(UIImage *)image
+{
+    [self tearDown];
+    [self setupWithImage:image];
+}
+
 - (void)draw
 {
     glActiveTexture(GL_TEXTURE0);
@@ -399,6 +405,8 @@ float cwRandom(float min, float max)
 {
     glDeleteBuffers(1, &_vertexBuffer);
     glDeleteVertexArraysOES(1, &_vertexArray);
+    
+    glDeleteTextures(1, &_texture);
 
 }
 - (BOOL)containsPoint:(GLKVector3)point

@@ -24,6 +24,8 @@
 
 - (id)initWithImage:(UIImage*)image origin:(GLKVector3)origin scale:(float)scale andWindowShape:(CWWindowShape*)shape;
 
+- (void) setImage:(UIImage*)image;
+
 - (void) draw;
 
 - (void) tearDown;

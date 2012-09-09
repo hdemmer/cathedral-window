@@ -34,6 +34,10 @@ GLint uniforms[NUM_UNIFORMS];
     
     CGPoint _pan;
     float _zoom;
+    
+    float _animationLambda;
+    CWWindow * _pickedWindow;
+
 }
 @property (strong, nonatomic) EAGLContext *context;
 
@@ -71,6 +75,13 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void) tapRecognizerFired:(UITapGestureRecognizer*)tapGestureRecognizer
 {
+    if (_pickedWindow)
+        return;
+
+    [UIView animateWithDuration:0.5 animations:^{
+        self.toolbar.alpha = 1.0f;
+    }];
+    
     CGPoint location = [tapGestureRecognizer locationInView:self.view];
     
     GLKVector3 window_coord = GLKVector3Make(location.x,self.view.frame.size.height-location.y, 0.0f);
@@ -86,14 +97,14 @@ GLint uniforms[NUM_UNIFORMS];
 
     GLKVector3 pointInPlane = [self solveZZeroWith:near_pt and:far_pt iterations:0];
     
-    NSLog(@"%f : %f : %f ",pointInPlane.x, pointInPlane.y, pointInPlane.z);
-    
     for (CWWindow * window in self.windows)
     {
         if ([window containsPoint:pointInPlane])
         {
-            NSLog(@"In Window at %f %f", window.origin.x, window.origin.y);
+            _animationLambda = 0.0f;
+            _pickedWindow = window;
             _lookAt = window.origin;
+            return;
         }
     }
 }
@@ -143,7 +154,9 @@ GLint uniforms[NUM_UNIFORMS];
     [self.view addGestureRecognizer:pinchGestureRecognizer];
     
     UITapGestureRecognizer * tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognizerFired:)];
+    tapRecognizer.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tapRecognizer];
+    
     
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     
@@ -252,21 +265,38 @@ GLint uniforms[NUM_UNIFORMS];
     eye = GLKVector3Normalize(eye);
     eye = GLKVector3MultiplyScalar(eye, _zoom);
     
+    eye.x += _animationLambda * _lookAt.x;
+    eye.y += _animationLambda * _lookAt.y;
+    
     return eye;
+}
+
+- (GLKVector3) lookAtPosition
+{
+    if (!_pickedWindow)
+    {
+        return GLKVector3Make(0, 0, 0);
+    }
+    return GLKVector3MultiplyScalar(_lookAt, _animationLambda);
 }
 
 #pragma mark - GLKView and GLKViewController delegate methods
 
 - (void)update
 {
+    _animationLambda += self.timeSinceLastUpdate;
+    if (_animationLambda > 1)
+        _animationLambda = 1;
+    
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
     
     GLKVector3 eye = [self eyePosition];
+    GLKVector3 lookAt = [self lookAtPosition];
     
     glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
 
-    _modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, _lookAt.x, _lookAt.y, _lookAt.z, 0, 1, 0);
+    _modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, lookAt.x, lookAt.y, lookAt.z, 0, 1, 0);
         
     _modelViewProjectionMatrix = GLKMatrix4Multiply(_projectionMatrix, _modelViewMatrix);
 }
@@ -275,7 +305,6 @@ GLint uniforms[NUM_UNIFORMS];
 {
     glClearColor(0.01f, 0.01f, 0.02f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
     
     // Render the object again with ES2
     glUseProgram(_program);
@@ -460,6 +489,12 @@ GLint uniforms[NUM_UNIFORMS];
 }
 
 - (IBAction)donePressed:(id)sender {
+    _pickedWindow = nil;
+    _lookAt = GLKVector3Make(0, 0, 0);
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        self.toolbar.alpha = 0.0f;
+    }];
 }
 
 - (IBAction)cameraPressed:(id)sender {
