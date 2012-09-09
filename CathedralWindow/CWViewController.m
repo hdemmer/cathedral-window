@@ -26,7 +26,11 @@ GLint uniforms[NUM_UNIFORMS];
 @interface CWViewController () {
     GLuint _program;
     
+    GLKMatrix4 _modelViewMatrix;
+    GLKMatrix4 _projectionMatrix;
     GLKMatrix4 _modelViewProjectionMatrix;
+    
+    GLKVector3 _lookAt;
     
     CGPoint _pan;
     float _zoom;
@@ -48,6 +52,49 @@ GLint uniforms[NUM_UNIFORMS];
 @synthesize windows=_windows;
 
 #define MAX_PAN 300
+
+- (GLKVector3) solveZZeroWith:(GLKVector3)p1 and:(GLKVector3)p2 iterations:(int)iterations
+{
+    GLKVector3 half = GLKVector3Lerp(p1, p2, 0.5f);
+    if (iterations>25)
+        return half;
+    
+    
+    if (half.z >0)
+    {
+        return [self solveZZeroWith:half and:p2 iterations:iterations+1];
+    } else {
+        return [self solveZZeroWith:p1 and:half iterations:iterations+1];
+    }
+}
+
+- (void) tapRecognizerFired:(UITapGestureRecognizer*)tapGestureRecognizer
+{
+    CGPoint location = [tapGestureRecognizer locationInView:self.view];
+    
+    GLKVector3 window_coord = GLKVector3Make(location.x,self.view.frame.size.height-location.y, 0.0f);
+    bool result;
+    int viewport[4];
+    viewport[0] = 0.0f;
+    viewport[1] = 0.0f;
+    viewport[2] = self.view.frame.size.width;
+    viewport[3] = self.view.frame.size.height;
+    GLKVector3 near_pt = GLKMathUnproject(window_coord, _modelViewMatrix, _projectionMatrix, &viewport[0], &result);
+    window_coord = GLKVector3Make(location.x,self.view.frame.size.height-location.y, 1.0f);
+    GLKVector3 far_pt = GLKMathUnproject(window_coord, _modelViewMatrix, _projectionMatrix, &viewport[0], &result);
+
+    GLKVector3 pointInPlane = [self solveZZeroWith:near_pt and:far_pt iterations:0];
+    
+    NSLog(@"%f : %f : %f ",pointInPlane.x, pointInPlane.y, pointInPlane.z);
+    
+    for (CWWindow * window in self.windows)
+    {
+        if ([window containsPoint:pointInPlane])
+        {
+            _lookAt = window.origin;
+        }
+    }
+}
 
 - (void) panGestureRecognizerFired:(UIPanGestureRecognizer*)panGestureRecognizer
 {
@@ -92,6 +139,9 @@ GLint uniforms[NUM_UNIFORMS];
     
     UIPinchGestureRecognizer * pinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchGestureRecognizerFired:)];
     [self.view addGestureRecognizer:pinchGestureRecognizer];
+    
+    UITapGestureRecognizer * tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognizerFired:)];
+    [self.view addGestureRecognizer:tapRecognizer];
     
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     
@@ -188,14 +238,8 @@ GLint uniforms[NUM_UNIFORMS];
     }
 }
 
-#pragma mark - GLKView and GLKViewController delegate methods
-
-- (void)update
+- (GLKVector3) eyePosition
 {
-    float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
-    GLKMatrix4 projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
-    
-    
     float x = -_pan.x / MAX_PAN;
     float y = _pan.y / MAX_PAN;
     
@@ -205,11 +249,23 @@ GLint uniforms[NUM_UNIFORMS];
     eye = GLKVector3Normalize(eye);
     eye = GLKVector3MultiplyScalar(eye, _zoom);
     
+    return eye;
+}
+
+#pragma mark - GLKView and GLKViewController delegate methods
+
+- (void)update
+{
+    float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
+    _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
+    
+    GLKVector3 eye = [self eyePosition];
+    
     glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
 
-    GLKMatrix4 modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, 0, 0, 0, 0, 1, 0);
+    _modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, _lookAt.x, _lookAt.y, _lookAt.z, 0, 1, 0);
         
-    _modelViewProjectionMatrix = GLKMatrix4Multiply(projectionMatrix, modelViewMatrix);
+    _modelViewProjectionMatrix = GLKMatrix4Multiply(_projectionMatrix, _modelViewMatrix);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect

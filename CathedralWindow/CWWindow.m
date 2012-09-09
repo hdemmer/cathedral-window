@@ -401,5 +401,15 @@ float cwRandom(float min, float max)
     glDeleteVertexArraysOES(1, &_vertexArray);
 
 }
+- (BOOL)containsPoint:(GLKVector3)point
+{
+    CWVertex v;
+    v.x = point.x + self.origin.x;
+    v.y = point.y + self.origin.y;
+    v.z = 0.0f;
+    
+    return [self.windowShape containsVertex:v];
+    
+}
 
 @end

@@ -28,5 +28,6 @@
 
 - (void) tearDown;
 
+- (BOOL) containsPoint:(GLKVector3)point;
 
 @end
