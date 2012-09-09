@@ -75,15 +75,19 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void) tapRecognizerFired:(UITapGestureRecognizer*)tapGestureRecognizer
 {
-    if (_pickedWindow)
-        return;
+    
+    CGPoint location = [tapGestureRecognizer locationInView:self.view];
 
+    if (_pickedWindow)
+    {
+        if (location.y < self.toolbar.frame.size.height)
+            return;
+    }
+    
     [UIView animateWithDuration:0.5 animations:^{
         self.toolbar.alpha = 1.0f;
     }];
-    
-    CGPoint location = [tapGestureRecognizer locationInView:self.view];
-    
+
     GLKVector3 window_coord = GLKVector3Make(location.x,self.view.frame.size.height-location.y, 0.0f);
     bool result;
     int viewport[4];
@@ -103,7 +107,6 @@ GLint uniforms[NUM_UNIFORMS];
         {
             _animationLambda = 0.0f;
             _pickedWindow = window;
-            _lookAt = window.origin;
             return;
         }
     }
@@ -265,26 +268,17 @@ GLint uniforms[NUM_UNIFORMS];
     eye = GLKVector3Normalize(eye);
     eye = GLKVector3MultiplyScalar(eye, _zoom);
     
-    eye.x += _animationLambda * _lookAt.x;
-    eye.y += _animationLambda * _lookAt.y;
+    eye.x += _lookAt.x;
+    eye.y += _lookAt.y;
     
     return eye;
-}
-
-- (GLKVector3) lookAtPosition
-{
-    if (!_pickedWindow)
-    {
-        return GLKVector3Make(0, 0, 0);
-    }
-    return GLKVector3MultiplyScalar(_lookAt, _animationLambda);
 }
 
 #pragma mark - GLKView and GLKViewController delegate methods
 
 - (void)update
 {
-    _animationLambda += self.timeSinceLastUpdate;
+    _animationLambda += self.timeSinceLastUpdate/2.0;
     if (_animationLambda > 1)
         _animationLambda = 1;
     
@@ -292,7 +286,16 @@ GLint uniforms[NUM_UNIFORMS];
     _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
     
     GLKVector3 eye = [self eyePosition];
-    GLKVector3 lookAt = [self lookAtPosition];
+    GLKVector3 lookAt = _lookAt;
+    
+    GLKVector3 targetLookAt = GLKVector3Make(0, 0, 0);
+    if (_pickedWindow)
+    {
+        targetLookAt = _pickedWindow.origin;
+    }
+    
+    lookAt = GLKVector3Lerp(lookAt, targetLookAt, _animationLambda);
+    _lookAt = lookAt;
     
     glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
 
@@ -490,7 +493,7 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (IBAction)donePressed:(id)sender {
     _pickedWindow = nil;
-    _lookAt = GLKVector3Make(0, 0, 0);
+    _animationLambda=0.0;
     
     [UIView animateWithDuration:0.5 animations:^{
         self.toolbar.alpha = 0.0f;
