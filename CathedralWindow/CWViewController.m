@@ -50,6 +50,7 @@ GLint uniforms[NUM_UNIFORMS];
 
 @synthesize context = _context;
 @synthesize windows=_windows;
+@synthesize toolbar = _toolbar;
 
 #define MAX_PAN 300
 
@@ -91,6 +92,7 @@ GLint uniforms[NUM_UNIFORMS];
     {
         if ([window containsPoint:pointInPlane])
         {
+            NSLog(@"In Window at %f %f", window.origin.x, window.origin.y);
             _lookAt = window.origin;
         }
     }
@@ -158,6 +160,7 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void)viewDidUnload
 {    
+    [self setToolbar:nil];
     [super viewDidUnload];
     
     [self tearDownGL];
@@ -456,4 +459,12 @@ GLint uniforms[NUM_UNIFORMS];
     return YES;
 }
 
+- (IBAction)donePressed:(id)sender {
+}
+
+- (IBAction)cameraPressed:(id)sender {
+}
+
+- (IBAction)actionPressed:(id)sender {
+}
 @end

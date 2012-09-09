@@ -404,8 +404,8 @@ float cwRandom(float min, float max)
 - (BOOL)containsPoint:(GLKVector3)point
 {
     CWVertex v;
-    v.x = point.x + self.origin.x;
-    v.y = point.y + self.origin.y;
+    v.x = (point.x - self.origin.x)/_scale + 0.5f;
+    v.y = (point.y - self.origin.y)/_scale + 0.5f;
     v.z = 0.0f;
     
     return [self.windowShape containsVertex:v];
