@@ -11,7 +11,7 @@
 
 #import "CWWindow.h"
 
-@interface CWViewController : GLKViewController
+@interface CWViewController : GLKViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (nonatomic, retain) NSArray * windows;
 

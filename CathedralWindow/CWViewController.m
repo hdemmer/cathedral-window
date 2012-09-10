@@ -218,6 +218,7 @@ GLint uniforms[NUM_UNIFORMS];
      
      for (int i = 0; i < 12; i++)
      {
+         shape = [[CWWindowShape alloc] init];
          shape.shapeType = CWWST_FIRST;
          
          float t = i/6.0f * M_PI;
@@ -229,6 +230,7 @@ GLint uniforms[NUM_UNIFORMS];
          
          GLKVector3 origin2 = GLKVector3Make(1.37*cosf(t+M_PI_2 / 6.0f), 1.37*sin(t+M_PI_2 / 6.0f), 0);
          
+         shape = [[CWWindowShape alloc] init];
          shape.shapeType = CWWST_ROUND;
          
          [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"smallWindow.png"] origin:origin2 scale:0.25 andWindowShape:shape]];
@@ -491,16 +493,42 @@ GLint uniforms[NUM_UNIFORMS];
     return YES;
 }
 
-- (IBAction)donePressed:(id)sender {
+- (void) deselectPickedWindow
+{
     _pickedWindow = nil;
     _animationLambda=0.0;
     
     [UIView animateWithDuration:0.5 animations:^{
         self.toolbar.alpha = 0.0f;
-    }];
+    }];    
+}
+
+- (IBAction)donePressed:(id)sender {
+    [self deselectPickedWindow];
 }
 
 - (IBAction)cameraPressed:(id)sender {
+    if ([UIImagePickerController isSourceTypeAvailable:
+         UIImagePickerControllerSourceTypePhotoLibrary])
+    {
+        UIImagePickerController *imagePicker =
+        [[UIImagePickerController alloc] init];
+        imagePicker.delegate = self;
+        imagePicker.sourceType =
+        UIImagePickerControllerSourceTypePhotoLibrary;
+        imagePicker.allowsEditing = YES;
+        [self presentModalViewController:imagePicker
+                                animated:YES];
+    }
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
+{
+    [_pickedWindow setImage:image];
+    
+    [self deselectPickedWindow];
+    
+    [picker dismissModalViewControllerAnimated:YES];
 }
 
 - (IBAction)actionPressed:(id)sender {
