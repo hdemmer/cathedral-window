@@ -30,6 +30,7 @@
 		FD9F432715FA48260092B98B /* CWWindowShape.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F432615FA48260092B98B /* CWWindowShape.m */; };
 		FD9F432915FB44720092B98B /* smallWindow.png in Resources */ = {isa = PBXBuildFile; fileRef = FD9F432815FB44720092B98B /* smallWindow.png */; };
 		FD9F432B15FB89650092B98B /* Ronan.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FD9F432A15FB89650092B98B /* Ronan.jpg */; };
+		FD9F432D15FE6D3B0092B98B /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F432C15FE6D3B0092B98B /* AssetsLibrary.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		FD9F432615FA48260092B98B /* CWWindowShape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWWindowShape.m; sourceTree = "<group>"; };
 		FD9F432815FB44720092B98B /* smallWindow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smallWindow.png; sourceTree = "<group>"; };
 		FD9F432A15FB89650092B98B /* Ronan.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Ronan.jpg; sourceTree = "<group>"; };
+		FD9F432C15FE6D3B0092B98B /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD9F432D15FE6D3B0092B98B /* AssetsLibrary.framework in Frameworks */,
 				FD9F42D515F3BE750092B98B /* UIKit.framework in Frameworks */,
 				FD9F42D715F3BE750092B98B /* Foundation.framework in Frameworks */,
 				FD9F42D915F3BE750092B98B /* CoreGraphics.framework in Frameworks */,
@@ -125,6 +128,7 @@
 		FD9F42D315F3BE750092B98B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FD9F432C15FE6D3B0092B98B /* AssetsLibrary.framework */,
 				FD9F42D415F3BE750092B98B /* UIKit.framework */,
 				FD9F42D615F3BE750092B98B /* Foundation.framework */,
 				FD9F42D815F3BE750092B98B /* CoreGraphics.framework */,

@@ -37,7 +37,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     float _animationLambda;
     CWWindow * _pickedWindow;
-
+    
 }
 @property (strong, nonatomic) EAGLContext *context;
 
@@ -77,17 +77,17 @@ GLint uniforms[NUM_UNIFORMS];
 {
     
     CGPoint location = [tapGestureRecognizer locationInView:self.view];
-
+    
     if (_pickedWindow)
     {
         if (location.y < self.toolbar.frame.size.height)
             return;
     }
     
-    [UIView animateWithDuration:0.5 animations:^{
+    /*[UIView animateWithDuration:0.5 animations:^{
         self.toolbar.alpha = 1.0f;
-    }];
-
+    }];*/
+    
     GLKVector3 window_coord = GLKVector3Make(location.x,self.view.frame.size.height-location.y, 0.0f);
     bool result;
     int viewport[4];
@@ -98,15 +98,16 @@ GLint uniforms[NUM_UNIFORMS];
     GLKVector3 near_pt = GLKMathUnproject(window_coord, _modelViewMatrix, _projectionMatrix, &viewport[0], &result);
     window_coord = GLKVector3Make(location.x,self.view.frame.size.height-location.y, 1.0f);
     GLKVector3 far_pt = GLKMathUnproject(window_coord, _modelViewMatrix, _projectionMatrix, &viewport[0], &result);
-
+    
     GLKVector3 pointInPlane = [self solveZZeroWith:near_pt and:far_pt iterations:0];
     
     for (CWWindow * window in self.windows)
     {
         if ([window containsPoint:pointInPlane])
         {
-            _animationLambda = 0.0f;
-            _pickedWindow = window;
+            [self randomImageForWindow:window];
+            //            _animationLambda = 0.0f;
+            //            _pickedWindow = window;
             return;
         }
     }
@@ -116,22 +117,22 @@ GLint uniforms[NUM_UNIFORMS];
 {
     CGPoint pan = [panGestureRecognizer translationInView:self.view];
     [panGestureRecognizer setTranslation:CGPointZero inView:self.view];
-
+    
     _pan.x += pan.x;
     _pan.y += pan.y;
-
+    
     if (_pan.x < -MAX_PAN)
         _pan.x = -MAX_PAN;
-
+    
     if (_pan.x > MAX_PAN)
         _pan.x = MAX_PAN;
-
+    
     if (_pan.y < -MAX_PAN)
         _pan.y = -MAX_PAN;
-
+    
     if (_pan.y > MAX_PAN)
         _pan.y = MAX_PAN;
-
+    
 }
 
 - (void) pinchGestureRecognizerFired:(UIPinchGestureRecognizer*)pinchGestureRecognizer
@@ -141,7 +142,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     if (_zoom >4.0)
         _zoom = 4.0;
-        
+    
     if (_zoom < 1.0)
         _zoom = 1.0;
 }
@@ -197,6 +198,33 @@ GLint uniforms[NUM_UNIFORMS];
 {
     return YES;
 }
+
+#import <AssetsLibrary/AssetsLibrary.h>
+
+- (void) randomImageForWindow:(CWWindow*)window
+{
+    __block UIImage * image = nil;
+    
+    ALAssetsLibrary *al = [[ALAssetsLibrary alloc] init];
+    
+    [al enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+        if ([group numberOfAssets])
+        {
+            NSInteger i = rand() % [group numberOfAssets];
+            
+            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                if (index == i)
+                {
+                    image = [UIImage imageWithCGImage:[result thumbnail]];
+                    [window setImage:image];
+                }
+            } ];
+        }
+    } failureBlock:^(NSError *error) {
+        NSLog(@"fail");
+    }];   
+}
+
 - (void)setupGL
 {
     [EAGLContext setCurrentContext:self.context];
@@ -214,32 +242,33 @@ GLint uniforms[NUM_UNIFORMS];
     
     NSMutableArray * mutableWindows = [NSMutableArray arrayWithCapacity:24];
     
-    [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"Ronan.jpg"] origin:GLKVector3Make(0, 0, 0) scale:1.2 andWindowShape:shape]];
-     
-     for (int i = 0; i < 12; i++)
-     {
-         shape = [[CWWindowShape alloc] init];
-         shape.shapeType = CWWST_FIRST;
-         
-         float t = i/6.0f * M_PI;
-         GLKVector3 origin = GLKVector3Make(cosf(t), sin(t), 0);
-         
-         shape.rotation = t;
-         
-         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"splash.jpg"] origin:origin scale:1.0 andWindowShape:shape]];
-         
-         GLKVector3 origin2 = GLKVector3Make(1.37*cosf(t+M_PI_2 / 6.0f), 1.37*sin(t+M_PI_2 / 6.0f), 0);
-         
-         shape = [[CWWindowShape alloc] init];
-         shape.shapeType = CWWST_ROUND;
-         
-         [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"smallWindow.png"] origin:origin2 scale:0.25 andWindowShape:shape]];
-         
-
-         
-     }
+    [mutableWindows addObject:[[CWWindow alloc] initWithImage:nil origin:GLKVector3Make(0, 0, 0) scale:1.2 andWindowShape:shape]];
+    
+    for (int i = 0; i < 12; i++)
+    {
+        shape = [[CWWindowShape alloc] init];
+        shape.shapeType = CWWST_FIRST;
+        
+        float t = i/6.0f * M_PI;
+        GLKVector3 origin = GLKVector3Make(cosf(t), sin(t), 0);
+        
+        shape.rotation = t;
+        
+        [mutableWindows addObject:[[CWWindow alloc] initWithImage:nil origin:origin scale:1.0 andWindowShape:shape]];
+        
+        GLKVector3 origin2 = GLKVector3Make(1.37*cosf(t+M_PI_2 / 6.0f), 1.37*sin(t+M_PI_2 / 6.0f), 0);
+        
+        shape = [[CWWindowShape alloc] init];
+        shape.shapeType = CWWST_ROUND;
+        
+        [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"smallWindow.png"] origin:origin2 scale:0.25 andWindowShape:shape]];
+    }
     
     self.windows = [NSArray arrayWithArray:mutableWindows];
+    
+    [self.windows enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [self randomImageForWindow:(CWWindow*)obj];
+    }];
 }
 
 - (void)tearDownGL
@@ -265,7 +294,7 @@ GLint uniforms[NUM_UNIFORMS];
     float y = _pan.y / MAX_PAN;
     
     float z = 0.4;
-
+    
     GLKVector3 eye = GLKVector3Make(x, y, z);
     eye = GLKVector3Normalize(eye);
     eye = GLKVector3MultiplyScalar(eye, _zoom);
@@ -300,9 +329,9 @@ GLint uniforms[NUM_UNIFORMS];
     _lookAt = lookAt;
     
     glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
-
+    
     _modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, lookAt.x, lookAt.y, lookAt.z, 0, 1, 0);
-        
+    
     _modelViewProjectionMatrix = GLKMatrix4Multiply(_projectionMatrix, _modelViewMatrix);
 }
 
@@ -322,12 +351,12 @@ GLint uniforms[NUM_UNIFORMS];
     
     glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), -0.4*sinf(t),sinf(t));
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
-
+    
     glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.3+0.1*sinf(t));
     
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(uniforms[UNIFORM_TEXTURE_SAMPLER], 0);
-
+    
     for (CWWindow * window in self.windows)
     {
         [window draw];
