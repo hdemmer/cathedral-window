@@ -10,13 +10,21 @@ attribute vec3 position;
 attribute vec3 diffuse;
 attribute vec2 texCoords;
 attribute vec4 localCoords;
+attribute vec3 position2;
+attribute vec3 diffuse2;
+attribute vec2 texCoords2;
+attribute float animationStartTime;
 
 varying lowp vec3 colorBaseV;
 varying lowp vec3 colorGlowV;
+varying lowp vec3 colorBaseV2;
+varying lowp vec3 colorGlowV2;
 varying mediump float intensityDirectV;
 
 varying lowp vec2 texCoordsV;
+varying lowp vec2 texCoordsV2;
 varying lowp vec4 localCoordsV;
+varying lowp float lambda;
 
 uniform mat4 modelViewProjectionMatrix;
 
@@ -24,6 +32,8 @@ uniform vec3 eyePosition;
 
 uniform float ambientIntensity;
 uniform vec3 sunVector;
+
+uniform float theTime;
 
 void main()
 {
@@ -39,16 +49,25 @@ void main()
     sunAngle = sunAngle * sunAngle;
     
     float luma = dot(diffuse, vec3(0.299,0.587,0.114));
+    float luma2 = dot(diffuse2, vec3(0.299,0.587,0.114));
     
     vec3 base = diffuse * ambientIntensity;
+    vec3 base2 = diffuse2 * ambientIntensity;
     vec3 colorGlow = mix(diffuse,luma*vec3(1.0,1.0,1.0), -1.5) * glowCoeff;  // kick out sat
+    vec3 colorGlow2 = mix(diffuse2,luma*vec3(1.0,1.0,1.0), -1.5) * glowCoeff;  // kick out sat
     intensityDirectV = sunAngle * luma*luma;
 
     colorBaseV = base;
+    colorBaseV2 = base2;
     colorGlowV = colorGlow;
+    colorGlowV2=colorGlow2;
     
     texCoordsV = texCoords;
+    texCoordsV2 = texCoords2;
     localCoordsV=localCoords;
     
-    gl_Position = modelViewProjectionMatrix * vec4(position,1.0);
+    lambda = clamp(theTime - animationStartTime, 0.0,1.0);
+    vec3 positionMix = mix(position,position2,lambda);
+    
+    gl_Position = modelViewProjectionMatrix * vec4(positionMix,1.0);
 }

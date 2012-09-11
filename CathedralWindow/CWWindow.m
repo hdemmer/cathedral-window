@@ -381,6 +381,14 @@ float cwRandom(float min, float max)
     glVertexAttribPointer(ATTRIB_TEXCOORDS, 2, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(24));
     glEnableVertexAttribArray(ATTRIB_LOCALCOORDS);
     glVertexAttribPointer(ATTRIB_LOCALCOORDS, 4, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(32));
+
+    glEnableVertexAttribArray(ATTRIB_VERTEX2);
+    glVertexAttribPointer(ATTRIB_VERTEX2, 3, GL_FLOAT, GL_FALSE, 48, 0);
+    glEnableVertexAttribArray(ATTRIB_COLOR2);
+    glVertexAttribPointer(ATTRIB_COLOR2, 3, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(12));
+    glEnableVertexAttribArray(ATTRIB_TEXCOORDS2);
+    glVertexAttribPointer(ATTRIB_TEXCOORDS2, 2, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(24));
+
     
     glBindVertexArrayOES(0);
 

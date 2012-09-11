@@ -19,6 +19,8 @@ enum
     UNIFORM_SUN_COLOR,
     UNIFORM_AMBIENT_INTENSITY,
     UNIFORM_TEXTURE_SAMPLER,
+    UNIFORM_TEXTURE_SAMPLER2,
+    UNIFORM_THE_TIME,
     NUM_UNIFORMS
 };
 GLint uniforms[NUM_UNIFORMS];
@@ -37,7 +39,6 @@ GLint uniforms[NUM_UNIFORMS];
     
     float _animationLambda;
     CWWindow * _pickedWindow;
-    
 }
 @property (strong, nonatomic) EAGLContext *context;
 
@@ -106,8 +107,8 @@ GLint uniforms[NUM_UNIFORMS];
         if ([window containsPoint:pointInPlane])
         {
             [self randomImageForWindow:window];
-            //            _animationLambda = 0.0f;
-            //            _pickedWindow = window;
+            _animationLambda = 0.0f;
+            _pickedWindow = window;
             return;
         }
     }
@@ -308,7 +309,7 @@ GLint uniforms[NUM_UNIFORMS];
 #pragma mark - GLKView and GLKViewController delegate methods
 
 - (void)update
-{
+{    
     _animationLambda += self.timeSinceLastUpdate/2.0;
     if (_animationLambda > 1)
         _animationLambda = 1;
@@ -329,6 +330,7 @@ GLint uniforms[NUM_UNIFORMS];
     _lookAt = lookAt;
     
     glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
+    glUniform1f(uniforms[UNIFORM_THE_TIME], [NSDate timeIntervalSinceReferenceDate]);
     
     _modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, lookAt.x, lookAt.y, lookAt.z, 0, 1, 0);
     
@@ -428,6 +430,8 @@ GLint uniforms[NUM_UNIFORMS];
     uniforms[UNIFORM_AMBIENT_INTENSITY] = glGetUniformLocation(_program, "ambientIntensity");
     
     uniforms[UNIFORM_TEXTURE_SAMPLER] = glGetUniformLocation(_program, "Texture");
+    uniforms[UNIFORM_TEXTURE_SAMPLER2] = glGetUniformLocation(_program, "Texture2");
+    uniforms[UNIFORM_THE_TIME] = glGetUniformLocation(_program, "theTime");
     
     // Release vertex and fragment shaders.
     if (vertShader) {

@@ -22,6 +22,10 @@ enum
     ATTRIB_COLOR,
     ATTRIB_TEXCOORDS,
     ATTRIB_LOCALCOORDS,
+    ATTRIB_VERTEX2,
+    ATTRIB_COLOR2,
+    ATTRIB_TEXCOORDS2,
+    ATTRIB_ANIMATION_START_TIME,
     NUM_ATTRIBUTES
 };
 
@@ -38,6 +42,15 @@ typedef struct {
     float l2;
     float l3;
     float l4;
+    float x2;
+    float y2;
+    float z2;
+    float r2;
+    float g2;
+    float b2;
+    float u2;
+    float v2;
+    float animationStartTime;
 } CWVertex;
 
 typedef struct {
