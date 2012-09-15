@@ -67,6 +67,7 @@ void main()
     localCoordsV=localCoords;
     
     lambda = clamp(theTime - animationStartTime, 0.0,1.0);
+    
     vec3 positionMix = mix(position,position2,lambda);
     
     gl_Position = modelViewProjectionMatrix * vec4(positionMix,1.0);

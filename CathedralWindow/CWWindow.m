@@ -8,6 +8,8 @@
 
 #import "CWWindow.h"
 
+#import "CWTimeSingleton.h"
+
 @interface CWWindow ()
 {
     int _numVertices;
@@ -20,7 +22,10 @@
 @synthesize origin=_origin;
 @synthesize windowShape=_windowShape;
 
-- (id)initWithImage:(UIImage *)image origin:(GLKVector3)origin scale:(float)scale andWindowShape:(CWWindowShape *)shape
+@synthesize currentImage=_currentImage;
+@synthesize nextImage=_nextImage;
+
+- (id)initWithOrigin:(GLKVector3)origin scale:(float)scale andWindowShape:(CWWindowShape *)shape
 {
     self = [super init];
     
@@ -29,17 +34,27 @@
         _scale = scale;
         self.origin = origin;
         self.windowShape = shape;
-        [self setupWithImage:image];
+        
+        glGenVertexArraysOES(1, &_vertexArray);
+        glGenBuffers(1, &_vertexBuffer);
+        glGenTextures(2, _textures);
+        
     }
     
     return self;
 }
 
+-(void)dealloc
+{
+    glDeleteBuffers(1, &_vertexBuffer);
+    glDeleteVertexArraysOES(1, &_vertexArray);
+    
+    glDeleteTextures(2, _textures);
+}
 
 #define IMAGE_SIZE 256
 
 #define GRID_STEP 8
-
 
 - (UIImage*)image:(UIImage*)image ByScalingAndCroppingForSize:(CGSize)targetSize
 {
@@ -97,78 +112,118 @@
     return newImage;
 }
 
-- (CWTriangles)segmentIntoTriangles:(UIImage*)image
+- (CWTriangles)segmentIntoTriangles
 {
     CWTriangles result;
     
-    CGImageRef imageRef = [[self image:image ByScalingAndCroppingForSize:CGSizeMake(IMAGE_SIZE, IMAGE_SIZE)] CGImage];
-    NSUInteger width = CGImageGetWidth(imageRef);
-    NSUInteger height = CGImageGetHeight(imageRef);
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    unsigned char *rawData = (unsigned char*) calloc(height * width * 4, sizeof(unsigned char));
+    NSUInteger width = IMAGE_SIZE;
+    NSUInteger height = IMAGE_SIZE;
+    unsigned char *rawData[2] = {(unsigned char*) calloc(height * width * 4, sizeof(unsigned char)),(unsigned char*) calloc(height * width * 4, sizeof(unsigned char))};
     NSUInteger bytesPerPixel = 4;
     NSUInteger bytesPerRow = bytesPerPixel * width;
     NSUInteger bitsPerComponent = 8;
-    CGContextRef context = CGBitmapContextCreate(rawData, width, height,
-                                                 bitsPerComponent, bytesPerRow, colorSpace,
-                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-    CGColorSpaceRelease(colorSpace);
+    {
+        CGImageRef imageRef = [self.currentImage CGImage];
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        
+        CGContextRef context = CGBitmapContextCreate(rawData[0], width, height,
+                                                     bitsPerComponent, bytesPerRow, colorSpace,
+                                                     kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+        CGColorSpaceRelease(colorSpace);
+        
+        CGContextScaleCTM(context, 1, -1);
+        
+        CGContextDrawImage(context, CGRectMake(0, -IMAGE_SIZE, width, height), imageRef);
+        CGContextRelease(context);
+    }
+    {
+        CGImageRef imageRef = [self.nextImage CGImage];
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        
+        CGContextRef context = CGBitmapContextCreate(rawData[1], width, height,
+                                                     bitsPerComponent, bytesPerRow, colorSpace,
+                                                     kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+        CGColorSpaceRelease(colorSpace);
+        
+        CGContextScaleCTM(context, 1, -1);
+        
+        CGContextDrawImage(context, CGRectMake(0, -IMAGE_SIZE, width, height), imageRef);
+        CGContextRelease(context);
+    }
     
-    CGContextScaleCTM(context, 1, -1);
-    
-    CGContextDrawImage(context, CGRectMake(0, -IMAGE_SIZE, width, height), imageRef);
-    CGContextRelease(context);
-    
-    unsigned char *hueData = (unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char));
-    unsigned char *lumaData = (unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char));
+    unsigned char *hueData[2] = {(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char)),(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char))};
+    unsigned char *lumaData[2] = {(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char)),(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char))};
     
     for (int x = 0; x < IMAGE_SIZE; x++)
     {
         for (int y = 0; y < IMAGE_SIZE; y++)
         {
-            float r = rawData[(x+y*width)*4]/255.0f;
-            float g =  rawData[(x+y*width)*4+1] / 255.0f;
-            float b = rawData[(x+y*width)*4+2] /255.0f;
-            
-            float hue = atan2f(sqrtf(3)*(g-b), 2.0f*(r-g-b));
-            
-            hueData[x+y*IMAGE_SIZE] = (hue * 255.0);
-            
-            float luma = 0.299*r+0.587*g+0.114*b;
-            
-            lumaData[x+y*IMAGE_SIZE] = (luma * 255.0);
+            for (int i=0; i<2;i++)
+            {
+                float r = rawData[i][(x+y*width)*4]/255.0f;
+                float g = rawData[i][(x+y*width)*4+1] / 255.0f;
+                float b = rawData[i][(x+y*width)*4+2] /255.0f;
+                
+                float hue = atan2f(sqrtf(3)*(g-b), 2.0f*(r-g-b));
+                
+                hueData[i][x+y*IMAGE_SIZE] = (hue * 255.0);
+                
+                float luma = 0.299*r+0.587*g+0.114*b;
+                
+                lumaData[i][x+y*IMAGE_SIZE] = (luma * 255.0);
+            }
         }
     }
     
-    unsigned char *sobelData = (unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char));
+    unsigned char *sobelData[2] = {(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char)),(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char))};
     
     for (int x = 1; x < IMAGE_SIZE-1; x++)
     {
         for (int y = 1; y < IMAGE_SIZE-1; y++)
         {
-            float xgrad = 
-            -1 * hueData[(y-1) * IMAGE_SIZE + x-1] +
-            -2 * hueData[y * IMAGE_SIZE + x-1] +
-            -1 * hueData[(y+1) * IMAGE_SIZE + x-1] +
-            1 * hueData[(y-1) * IMAGE_SIZE + x+1] +
-            2 * hueData[y * IMAGE_SIZE + x+1] +
-            1 * hueData[(y+1) * IMAGE_SIZE + x+1];
-            
-            float ygrad =
-            -1 * hueData[(y-1) * IMAGE_SIZE + x-1] +
-            -2 * hueData[(y-1) * IMAGE_SIZE + x] +
-            -1 * hueData[(y-1) * IMAGE_SIZE + x+1] +
-            1 * hueData[(y+1) * IMAGE_SIZE + x-1] +
-            2 * hueData[(y+1) * IMAGE_SIZE + x] +
-            1 * hueData[(y+1) * IMAGE_SIZE + x+1];
-            
-            float sobel = sqrtf(xgrad*xgrad + ygrad * ygrad);
-            
-            sobelData[x+y*IMAGE_SIZE] = sobel;
+            for (int i=0; i<2;i++)
+            {
+                
+                float xgrad = 
+                -1 * hueData[i][(y-1) * IMAGE_SIZE + x-1] +
+                -2 * hueData[i][y * IMAGE_SIZE + x-1] +
+                -1 * hueData[i][(y+1) * IMAGE_SIZE + x-1] +
+                1 * hueData[i][(y-1) * IMAGE_SIZE + x+1] +
+                2 * hueData[i][y * IMAGE_SIZE + x+1] +
+                1 * hueData[i][(y+1) * IMAGE_SIZE + x+1];
+                
+                float ygrad =
+                -1 * hueData[i][(y-1) * IMAGE_SIZE + x-1] +
+                -2 * hueData[i][(y-1) * IMAGE_SIZE + x] +
+                -1 * hueData[i][(y-1) * IMAGE_SIZE + x+1] +
+                1 * hueData[i][(y+1) * IMAGE_SIZE + x-1] +
+                2 * hueData[i][(y+1) * IMAGE_SIZE + x] +
+                1 * hueData[i][(y+1) * IMAGE_SIZE + x+1];
+                
+                float sobel = sqrtf(xgrad*xgrad + ygrad * ygrad);
+                
+                sobelData[i][x+y*IMAGE_SIZE] = sobel;
+            }
         }
     }
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, IMAGE_SIZE, IMAGE_SIZE, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, lumaData);
+    // tex
+    
+    glBindTexture(GL_TEXTURE_2D, _textures[0]);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, IMAGE_SIZE, IMAGE_SIZE, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, lumaData[0]);
+    
+    glBindTexture(GL_TEXTURE_2D, _textures[1]);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, IMAGE_SIZE, IMAGE_SIZE, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, lumaData[1]);
     
     // calculate nodes
     
@@ -182,6 +237,8 @@
     
     CWVertex * nodes = calloc(numNodes, sizeof(CWVertex));
     
+    NSTimeInterval theTime = [[CWTimeSingleton sharedInstance] currentTime];
+    
     for (int x=0; x<gridWidth; x++)
     {
         for (int y=0; y<gridWidth; y++)
@@ -194,11 +251,15 @@
             int my = cy;
             int sobelAtM = 0;
             
+            int mx2 = cx;
+            int my2 = cy;
+            int sobelAtM2 = 0;
+            
             for (int sx=x*gridStep+shift*gridStep*0.5f; sx<(x+1)*gridStep+shift*gridStep*0.5f; sx++)
             {
                 for (int sy=y*gridStep; sy<(y+1)*gridStep; sy++)
                 {
-                    unsigned char sobel = sobelData[sx + IMAGE_SIZE * sy];
+                    unsigned char sobel = sobelData[0][sx + IMAGE_SIZE * sy];
                     
                     if (sobel > sobelAtM)
                     {
@@ -207,23 +268,48 @@
                         sobelAtM = sobel;
                     }
                     
+                    unsigned char sobel2 = sobelData[1][sx + IMAGE_SIZE * sy];
+                    
+                    if (sobel2 > sobelAtM2)
+                    {
+                        mx2 = sx;
+                        my2 = sy;
+                        sobelAtM2 = sobel2;
+                    }
                 }
             }
             
-            nodes[x+gridWidth*y].x = mx/(float)IMAGE_SIZE;    // x
-            nodes[x+gridWidth*y].y = my/(float)IMAGE_SIZE;    // x
-            nodes[x+gridWidth*y].z = cwRandom(0, 0.001);
-            
-            float r = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel]/ 255.0f;
-            float g = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+1]/ 255.0f;
-            float b = rawData[(x*gridStep + width * y*gridStep)*bytesPerPixel+2]/ 255.0f;
-            nodes[x+gridWidth*y].r = r +cwRandom(0.0, 0.1);
-            nodes[x+gridWidth*y].g = g +cwRandom(0.0, 0.1);
-            nodes[x+gridWidth*y].b = b+cwRandom(0.0, 0.1);
+            {
+                nodes[x+gridWidth*y].x = mx/(float)IMAGE_SIZE;
+                nodes[x+gridWidth*y].y = my/(float)IMAGE_SIZE;
+                nodes[x+gridWidth*y].z = cwRandom(0, 0.001);
+                
+                float r = rawData[0][(x*gridStep + width * y*gridStep)*bytesPerPixel]/ 255.0f;
+                float g = rawData[0][(x*gridStep + width * y*gridStep)*bytesPerPixel+1]/ 255.0f;
+                float b = rawData[0][(x*gridStep + width * y*gridStep)*bytesPerPixel+2]/ 255.0f;
+                nodes[x+gridWidth*y].r = r +cwRandom(0.0, 0.1);
+                nodes[x+gridWidth*y].g = g +cwRandom(0.0, 0.1);
+                nodes[x+gridWidth*y].b = b+cwRandom(0.0, 0.1);
+            }
+            {
+                nodes[x+gridWidth*y].x2 = mx2/(float)IMAGE_SIZE;
+                nodes[x+gridWidth*y].y2 = my2/(float)IMAGE_SIZE;
+                nodes[x+gridWidth*y].z2 = cwRandom(0, 0.001);
+                
+                float r = rawData[1][(x*gridStep + width * y*gridStep)*bytesPerPixel]/ 255.0f;
+                float g = rawData[1][(x*gridStep + width * y*gridStep)*bytesPerPixel+1]/ 255.0f;
+                float b = rawData[1][(x*gridStep + width * y*gridStep)*bytesPerPixel+2]/ 255.0f;
+                nodes[x+gridWidth*y].r2 = r +cwRandom(0.0, 0.1);
+                nodes[x+gridWidth*y].g2 = g +cwRandom(0.0, 0.1);
+                nodes[x+gridWidth*y].b2 = b+cwRandom(0.0, 0.1);
+                
+            }
+            nodes[x+gridWidth*y].animationStartTime = theTime;
             
         }
     }
     
+    // move border vertices onto grid
     for (int x=0; x<gridWidth; x++)
     {
         nodes[x].y=0.0f;
@@ -236,13 +322,12 @@
     int numVertices = (gridWidth-1)*(gridWidth-1)*6;
     
     CWVertex * vertices = malloc(numVertices * sizeof(CWVertex));
-    
+
     for (int x=0; x<gridWidth-1; x++)
     {
         for (int y=0; y<gridWidth-1; y++)
         {
             int baseIndex = 6*(x+(gridWidth-1)*y);
-            
             
             vertices[baseIndex+0] = nodes[x+1+y*gridWidth];
             vertices[baseIndex+1] = nodes[x+y*gridWidth];
@@ -281,16 +366,25 @@
     result.numberOfVertices = numVertices;
     result.vertices = vertices;
     
-    free(rawData);
+    for (int i=0; i<2; i++)
+    {
+        free(rawData[i]);
+        
+        free(hueData[i]);
+        free(lumaData[i]);
+        free(sobelData[i]);
+    }
     
-    free(hueData);
-    free(lumaData);
-    free(sobelData);
     
     return result;
+    
+    // TODO:
+    /*
+     CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:self.windowShape];
+     free(result.vertices);
+     result = newResult;
+     */
 }
-
-
 
 
 float cwRandom(float min, float max)
@@ -302,40 +396,18 @@ float cwRandom(float min, float max)
 #import "CWTriangleProcessor.h"
 
 
-- (void) setupWithImage:(UIImage*)image
+- (void) pushImage:(UIImage *)image
 {
-    // tex
+    self.currentImage = self.nextImage;
+    self.nextImage = [self image:image ByScalingAndCroppingForSize:CGSizeMake(IMAGE_SIZE, IMAGE_SIZE)];
     
-    glGenTextures(1, &_texture);
-    glBindTexture(GL_TEXTURE_2D, _texture);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
-        
     // triangles
     
-    glGenVertexArraysOES(1, &_vertexArray);
     glBindVertexArrayOES(_vertexArray);
-
-    glGenBuffers(1, &_vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
     
-    CWTriangles result = [self segmentIntoTriangles:image];
+    CWTriangles result = [self segmentIntoTriangles];
     
-    
-    CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:self.windowShape];
-    free(result.vertices);
-    result = newResult;
-
-/*    
-    CWTriangles newResult = [CWTriangleProcessor rejectTriangles:result withBlock:^BOOL(CWVertex a, CWVertex b, CWVertex c) {
-        return sqrt(a.x*a.x + a.y*a.y)>1;
-    }];
-    
-    free(result.vertices);
-    result = newResult;
-  */  
     _numVertices = result.numberOfVertices;
     
     CWVertex * vertices = result.vertices;
@@ -346,77 +418,72 @@ float cwRandom(float min, float max)
         vertices[i].l1 = 1;
         vertices[i].l2 = 0;
         vertices[i].l3 = 0;
-
+        
         vertices[i+1].l1 = 0;
         vertices[i+1].l2 = 1;
         vertices[i+1].l3 = 0;
-
+        
         vertices[i+2].l1 = 0;
         vertices[i+2].l2 = 0;
         vertices[i+2].l3 = 1;
     }
-
+    
     // translate and tex coords
     for (int i =0; i< _numVertices; i++)
     {
         vertices[i].u = vertices[i].x;
         vertices[i].v = vertices[i].y;
         
+        vertices[i].u2 = vertices[i].x2;
+        vertices[i].v2 = vertices[i].y2;
+        
         vertices[i].x = (-0.5 + vertices[i].x)*_scale + self.origin.x;
         vertices[i].y = (-0.5 + vertices[i].y)*_scale + self.origin.y;
         vertices[i].z += self.origin.z;
+        
+        vertices[i].x2 = (-0.5 + vertices[i].x2)*_scale + self.origin.x;
+        vertices[i].y2 = (-0.5 + vertices[i].y2)*_scale + self.origin.y;
+        vertices[i].z2 += self.origin.z;
     }
     
     glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*_numVertices, vertices, GL_STATIC_DRAW);
-
+    
     free(result.vertices);
     
     // and finish
     
     glEnableVertexAttribArray(ATTRIB_VERTEX);
-    glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 48, 0);
+    glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 84, 0);
     glEnableVertexAttribArray(ATTRIB_COLOR);
-    glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(12));
+    glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(12));
     glEnableVertexAttribArray(ATTRIB_TEXCOORDS);
-    glVertexAttribPointer(ATTRIB_TEXCOORDS, 2, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(24));
+    glVertexAttribPointer(ATTRIB_TEXCOORDS, 2, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(24));
     glEnableVertexAttribArray(ATTRIB_LOCALCOORDS);
-    glVertexAttribPointer(ATTRIB_LOCALCOORDS, 4, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(32));
-
+    glVertexAttribPointer(ATTRIB_LOCALCOORDS, 4, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(32));
+    
     glEnableVertexAttribArray(ATTRIB_VERTEX2);
-    glVertexAttribPointer(ATTRIB_VERTEX2, 3, GL_FLOAT, GL_FALSE, 48, 0);
+    glVertexAttribPointer(ATTRIB_VERTEX2, 3, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(48));
     glEnableVertexAttribArray(ATTRIB_COLOR2);
-    glVertexAttribPointer(ATTRIB_COLOR2, 3, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(12));
+    glVertexAttribPointer(ATTRIB_COLOR2, 3, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(60));
     glEnableVertexAttribArray(ATTRIB_TEXCOORDS2);
-    glVertexAttribPointer(ATTRIB_TEXCOORDS2, 2, GL_FLOAT, GL_FALSE, 48, BUFFER_OFFSET(24));
-
+    glVertexAttribPointer(ATTRIB_TEXCOORDS2, 2, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(72));
+    glEnableVertexAttribArray(ATTRIB_ANIMATION_START_TIME);
+    glVertexAttribPointer(ATTRIB_ANIMATION_START_TIME, 1, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(80));
     
     glBindVertexArrayOES(0);
-
-}
-
-- (void)setImage:(UIImage *)image
-{
-    [self tearDown];
-    [self setupWithImage:image];
 }
 
 - (void)draw
 {
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, _texture);
+    glBindTexture(GL_TEXTURE_2D, _textures[0]);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, _textures[1]);
     glBindVertexArrayOES(_vertexArray);
     glDrawArrays(GL_TRIANGLES, 0, _numVertices);
-
-}
-
-- (void) tearDown
-{
-    glDeleteBuffers(1, &_vertexBuffer);
-    glDeleteVertexArraysOES(1, &_vertexArray);
     
-    glDeleteTextures(1, &_texture);
-
 }
+
 - (BOOL)containsPoint:(GLKVector3)point
 {
     CWVertex v;

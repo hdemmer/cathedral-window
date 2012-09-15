@@ -17,18 +17,20 @@
     GLuint _vertexArray;
     GLuint _vertexBuffer;
 
-    GLuint _texture;
+    GLuint _textures[2];
+    
 }
 
 @property (nonatomic, assign) GLKVector3 origin;
 
-- (id)initWithImage:(UIImage*)image origin:(GLKVector3)origin scale:(float)scale andWindowShape:(CWWindowShape*)shape;
+@property (nonatomic, retain) UIImage * nextImage;
+@property (nonatomic, retain) UIImage * currentImage;
 
-- (void) setImage:(UIImage*)image;
+- (id)initWithOrigin:(GLKVector3)origin scale:(float)scale andWindowShape:(CWWindowShape*)shape;
+
+- (void) pushImage:(UIImage*)image;
 
 - (void) draw;
-
-- (void) tearDown;
 
 - (BOOL) containsPoint:(GLKVector3)point;
 

@@ -217,7 +217,7 @@ GLint uniforms[NUM_UNIFORMS];
                 if (index == i)
                 {
                     image = [UIImage imageWithCGImage:[result thumbnail]];
-                    [window setImage:image];
+                    [window performSelectorOnMainThread:@selector(pushImage:) withObject:image waitUntilDone:YES];
                 }
             } ];
         }
@@ -243,7 +243,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     NSMutableArray * mutableWindows = [NSMutableArray arrayWithCapacity:24];
     
-    [mutableWindows addObject:[[CWWindow alloc] initWithImage:nil origin:GLKVector3Make(0, 0, 0) scale:1.2 andWindowShape:shape]];
+    [mutableWindows addObject:[[CWWindow alloc] initWithOrigin:GLKVector3Make(0, 0, 0) scale:1.2 andWindowShape:shape]];
     
     for (int i = 0; i < 12; i++)
     {
@@ -255,14 +255,14 @@ GLint uniforms[NUM_UNIFORMS];
         
         shape.rotation = t;
         
-        [mutableWindows addObject:[[CWWindow alloc] initWithImage:nil origin:origin scale:1.0 andWindowShape:shape]];
+        [mutableWindows addObject:[[CWWindow alloc] initWithOrigin:origin scale:1.0 andWindowShape:shape]];
         
         GLKVector3 origin2 = GLKVector3Make(1.37*cosf(t+M_PI_2 / 6.0f), 1.37*sin(t+M_PI_2 / 6.0f), 0);
         
         shape = [[CWWindowShape alloc] init];
         shape.shapeType = CWWST_ROUND;
         
-        [mutableWindows addObject:[[CWWindow alloc] initWithImage:[UIImage imageNamed:@"smallWindow.png"] origin:origin2 scale:0.25 andWindowShape:shape]];
+        [mutableWindows addObject:[[CWWindow alloc] initWithOrigin:origin2 scale:0.25 andWindowShape:shape]];
     }
     
     self.windows = [NSArray arrayWithArray:mutableWindows];
@@ -275,12 +275,8 @@ GLint uniforms[NUM_UNIFORMS];
 - (void)tearDownGL
 {
     [EAGLContext setCurrentContext:self.context];
-    
-    for (CWWindow * window in self.windows)
-    {
-        [window tearDown];
-    }
-    self.windows = nil;
+
+    self.windows = nil; // releases and tears down windows
     
     
     if (_program) {
@@ -308,8 +304,12 @@ GLint uniforms[NUM_UNIFORMS];
 
 #pragma mark - GLKView and GLKViewController delegate methods
 
+#import "CWTimeSingleton.h"
+
 - (void)update
-{    
+{
+    [[CWTimeSingleton sharedInstance] addTime:self.timeSinceLastUpdate];
+    
     _animationLambda += self.timeSinceLastUpdate/2.0;
     if (_animationLambda > 1)
         _animationLambda = 1;
@@ -330,7 +330,8 @@ GLint uniforms[NUM_UNIFORMS];
     _lookAt = lookAt;
     
     glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
-    glUniform1f(uniforms[UNIFORM_THE_TIME], [NSDate timeIntervalSinceReferenceDate]);
+    float theTime = [[CWTimeSingleton sharedInstance] currentTime];
+    glUniform1f(uniforms[UNIFORM_THE_TIME], theTime);
     
     _modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, lookAt.x, lookAt.y, lookAt.z, 0, 1, 0);
     
@@ -401,6 +402,10 @@ GLint uniforms[NUM_UNIFORMS];
     glBindAttribLocation(_program, ATTRIB_COLOR, "diffuse");
     glBindAttribLocation(_program, ATTRIB_TEXCOORDS, "texCoords");
     glBindAttribLocation(_program, ATTRIB_LOCALCOORDS, "localCoords");
+    glBindAttribLocation(_program, ATTRIB_VERTEX2, "position2");
+    glBindAttribLocation(_program, ATTRIB_COLOR2, "diffuse2");
+    glBindAttribLocation(_program, ATTRIB_TEXCOORDS2, "texCoords2");
+    glBindAttribLocation(_program, ATTRIB_ANIMATION_START_TIME, "animationStartTime");
     
     // Link program.
     if (![self linkProgram:_program]) {
@@ -557,7 +562,7 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
 {
-    [_pickedWindow setImage:image];
+    [_pickedWindow pushImage:image];
     
     [self deselectPickedWindow];
     
