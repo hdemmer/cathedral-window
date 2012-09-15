@@ -157,8 +157,11 @@
             zero.y=0.5f;
             
             a = [shape intersectLineFrom:zero to:a];
-            b = a;
-            c = a;
+            b = [shape intersectLineFrom:zero to:b];
+            c = [shape intersectLineFrom:zero to:c];
+            
+            a.l1 = 1.0f; // hacked to pass through clip info
+            
             
             result.vertices[result.numberOfVertices] = a;
             result.vertices[result.numberOfVertices+1] = b;
@@ -204,6 +207,38 @@
                 result.vertices[result.numberOfVertices+2] = c;
                 
                 result.numberOfVertices += 3;
+            }
+            
+            if (!containsA && !containsB && !containsC)
+            {
+                if (a.l1 != 1.0f)
+                {
+                // remove in animation
+                
+                CWVertex zero = a;
+                zero.x = 0.5f;
+                zero.y=0.5f;
+                
+                a = [shape intersectLine2From:zero to:a];
+                b = [shape intersectLine2From:zero to:b];
+                c = [shape intersectLine2From:zero to:c];
+                    
+                    a.r2=0;
+                    a.g2=0;
+                    a.b2=0;
+                    b.r2=0;
+                    b.g2=0;
+                    b.b2=0;
+                    c.r2=0;
+                    c.g2=0;
+                    c.b2=0;
+
+                result.vertices[result.numberOfVertices] = a;
+                result.vertices[result.numberOfVertices+1] = b;
+                result.vertices[result.numberOfVertices+2] = c;
+                
+                result.numberOfVertices += 3;
+                }
             }
             
             if (containsA && !containsB && !containsC)
