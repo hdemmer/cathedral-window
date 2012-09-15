@@ -390,9 +390,12 @@ float cwRandom(float min, float max)
 
 
 - (void) pushImage:(UIImage *)image
-{
+{    
     self.currentImage = self.nextImage;
     self.nextImage = [self image:image ByScalingAndCroppingForSize:CGSizeMake(IMAGE_SIZE, IMAGE_SIZE)];
+    
+    if (!self.currentImage)
+        self.currentImage = self.nextImage;
     
     // triangles
     
