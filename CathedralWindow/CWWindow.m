@@ -279,6 +279,17 @@
                 }
             }
             
+            if (mx==x*gridStep+shift*gridStep*0.5f && my==y*gridStep)
+            {
+                mx=cx;
+                my=cy;
+            }
+            if (mx2==x*gridStep+shift*gridStep*0.5f && my2==y*gridStep)
+            {
+                mx2=cx;
+                my2=cy;
+            }
+            
             {
                 nodes[x+gridWidth*y].x = mx/(float)IMAGE_SIZE;
                 nodes[x+gridWidth*y].y = my/(float)IMAGE_SIZE;

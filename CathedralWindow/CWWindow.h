@@ -18,7 +18,6 @@
     GLuint _vertexBuffer;
 
     GLuint _textures[2];
-    
 }
 
 @property (nonatomic, assign) GLKVector3 origin;

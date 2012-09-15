@@ -39,6 +39,9 @@ GLint uniforms[NUM_UNIFORMS];
     
     float _animationLambda;
     CWWindow * _pickedWindow;
+    
+    NSTimeInterval _lastRandomImage;
+    NSInteger _lastRandomIndex;
 }
 @property (strong, nonatomic) EAGLContext *context;
 
@@ -86,8 +89,8 @@ GLint uniforms[NUM_UNIFORMS];
     }
     
     /*[UIView animateWithDuration:0.5 animations:^{
-        self.toolbar.alpha = 1.0f;
-    }];*/
+     self.toolbar.alpha = 1.0f;
+     }];*/
     
     GLKVector3 window_coord = GLKVector3Make(location.x,self.view.frame.size.height-location.y, 0.0f);
     bool result;
@@ -275,7 +278,7 @@ GLint uniforms[NUM_UNIFORMS];
 - (void)tearDownGL
 {
     [EAGLContext setCurrentContext:self.context];
-
+    
     self.windows = nil; // releases and tears down windows
     
     
@@ -309,6 +312,21 @@ GLint uniforms[NUM_UNIFORMS];
 - (void)update
 {
     [[CWTimeSingleton sharedInstance] addTime:self.timeSinceLastUpdate];
+    
+    NSTimeInterval t = [[CWTimeSingleton sharedInstance] currentTime];
+    
+    if (t - _lastRandomImage > 0.3)
+    {
+        NSInteger windowIndex = rand() % [self.windows count];
+        
+        if (windowIndex != _lastRandomIndex)
+        {
+            [self randomImageForWindow:[self.windows objectAtIndex:windowIndex]];
+            
+            _lastRandomImage = t;
+            _lastRandomIndex = windowIndex;
+        }
+    }
     
     _animationLambda += self.timeSinceLastUpdate/2.0;
     if (_animationLambda > 1)
