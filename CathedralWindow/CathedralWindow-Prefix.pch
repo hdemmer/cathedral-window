@@ -29,6 +29,7 @@ enum
     NUM_ATTRIBUTES
 };
 
+
 typedef struct {
     float x;
     float y;

@@ -17,4 +17,5 @@ typedef BOOL (^CWTriangleRejectBlock)(CWVertex a, CWVertex b, CWVertex c);
 + (CWTriangles) rejectTriangles:(CWTriangles)triangles withBlock:(CWTriangleRejectBlock) triangleRejectBlock;
 
 + (CWTriangles)intersectTriangles:(CWTriangles)triangles withWindowShape:(CWWindowShape*)shape;
++ (CWTriangles)intersectTriangles2:(CWTriangles)triangles withWindowShape:(CWWindowShape*)shape;
 @end

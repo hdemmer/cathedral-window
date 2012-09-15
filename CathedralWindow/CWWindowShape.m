@@ -12,10 +12,10 @@
 @synthesize rotation=_rotation;
 @synthesize shapeType=_shapeType;
 
-- (BOOL)containsVertex:(CWVertex)vertex
+- (BOOL) containsPointU:(float)u V:(float)v
 {
-    float u = 2.0f*(vertex.x - 0.5f);
-    float v = 2.0f*(vertex.y - 0.5f);
+    u = 2.0f*(u - 0.5f);
+    v = 2.0f*(v - 0.5f);
     
     if (self.shapeType == CWWST_ROUND)
     {    
@@ -30,7 +30,7 @@
         
         u = rotatedPoint.x;
         v = rotatedPoint.y;
-                
+        
         float d = sqrtf(u*u+(excenter-v)*(excenter-v));
         float a = atan2f((excenter-v), u);
         
@@ -41,33 +41,63 @@
     return NO;
 }
 
+
 // a must be contained, b must not
-- (CWVertex)intersectLineFrom:(CWVertex)a to:(CWVertex)b withCounter:(int)iteration;
+- (CWIntersectResult)intersectLineFromU1:(float)u1 V1:(float)v1 toU2:(float)u2 V2:(float)v2 withCounter:(int)iteration;
 {
-    CWVertex half = a;
-    half.x = (a.x + b.x)*0.5f;
-    half.y = (a.y + b.y)*0.5f;
+    float halfu = (u1 + u2)*0.5f;
+    float halfv = (v1 + v2)*0.5f;
     
     if (iteration > 10)
-        return half;
-    
-    if ([self containsVertex:half])
     {
-        return [self intersectLineFrom:half to:b withCounter:iteration+1];
+        CWIntersectResult result;
+        result.u=halfu;
+        result.v = halfv;
+        return result;
+    }
+    
+    if ([self containsPointU:halfu V:halfv])
+    {
+        return [self intersectLineFromU1:halfu V1:halfv toU2:u2 V2:v2 withCounter:iteration+1];
     } else {
-        return [self intersectLineFrom:a to:half withCounter:iteration+1];
+        return [self intersectLineFromU1:u1 V1:v1 toU2:halfu V2:halfv withCounter:iteration+1];
     }
     
 }
 
+- (CWIntersectResult)intersectLineFromU1:(float)u1 V1:(float)v1 toU2:(float)u2 V2:(float)v2
+{
+    if ([self containsPointU:u1 V:v1])
+        return [self intersectLineFromU1:u1 V1:v1 toU2:u2 V2:v2 withCounter:0];
+    if ([self containsPointU:u2 V:v2])
+        return [self intersectLineFromU1:u2 V1:v2 toU2:u1 V2:v1 withCounter:0];
+    
+    CWIntersectResult deflt;
+    deflt.u=u1;
+    deflt.v = v1;
+    return deflt;
+}
+
+
 - (CWVertex)intersectLineFrom:(CWVertex)a to:(CWVertex)b
 {
-    if ([self containsVertex:a])
-        return [self intersectLineFrom:a to:b withCounter:0];
-    if ([self containsVertex:b])
-        return [self intersectLineFrom:b to:a withCounter:0];
+    CWIntersectResult result = [self intersectLineFromU1:a.x V1:a.y toU2:b.x V2:b.y];
+
+    b.x=result.u;
+    b.y=result.v;
     
-    return a;
+    return b;
 }
+
+- (CWVertex)intersectLine2From:(CWVertex)a to:(CWVertex)b
+{
+    CWIntersectResult result = [self intersectLineFromU1:a.x2 V1:a.y2 toU2:b.x2 V2:b.y2];
+    
+    b.x2=result.u;
+    b.y2=result.v;
+    
+    return b;
+}
+
 
 @end

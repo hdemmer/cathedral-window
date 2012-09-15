@@ -15,12 +15,23 @@ typedef enum {
     CWWST_FIRST
 } CWWindowShapeType;
 
+typedef struct {
+    float u;
+    float v;
+} CWIntersectResult;
+
 @interface CWWindowShape : NSObject
 
 @property (nonatomic, assign) float rotation;
 @property (nonatomic, assign) CWWindowShapeType shapeType;
 
-- (BOOL) containsVertex:(CWVertex)vertex;
-- (CWVertex) intersectLineFrom:(CWVertex)a to:(CWVertex)b;
+- (BOOL) containsPointU:(float)u V:(float)v;
+
+- (CWIntersectResult) intersectLineFromU1:(float)u1 V1:(float)v1 toU2:(float)u2 V2:(float)v2;
+
+
+- (CWVertex)intersectLineFrom:(CWVertex)a to:(CWVertex)b;
+- (CWVertex)intersectLine2From:(CWVertex)a to:(CWVertex)b;
+
 
 @end

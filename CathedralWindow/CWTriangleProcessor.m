@@ -45,10 +45,10 @@
         CWVertex b = triangles.vertices[i+1];
         CWVertex c = triangles.vertices[i+2];
         
-        BOOL containsA = [shape containsVertex:a];
-        BOOL containsB = [shape containsVertex:b];
-        BOOL containsC = [shape containsVertex:c];
-        
+        BOOL containsA = [shape containsPointU:a.x V:a.y];
+        BOOL containsB = [shape containsPointU:b.x V:b.y];
+        BOOL containsC = [shape containsPointU:c.x V:c.y];
+
         if (containsA || containsB || containsC)
         {
             if (containsA && containsB && containsC)
@@ -61,7 +61,7 @@
                 
                 result.numberOfVertices += 3;
             }
-            
+
             if (containsA && !containsB && !containsC)
             {
                 b = [shape intersectLineFrom:a to:b];
@@ -72,7 +72,7 @@
                 result.vertices[result.numberOfVertices+2] = c;
                 
                 result.numberOfVertices += 3;
-
+                
             } else if (containsB && !containsA && !containsC)
             {
                 a = [shape intersectLineFrom:b to:a];
@@ -83,7 +83,7 @@
                 result.vertices[result.numberOfVertices+2] = c;
                 
                 result.numberOfVertices += 3;
-
+                
             } else if (containsC && !containsB && !containsA)
             {
                 b = [shape intersectLineFrom:c to:b];
@@ -94,7 +94,7 @@
                 result.vertices[result.numberOfVertices+2] = c;
                 
                 result.numberOfVertices += 3;
-
+                
             }
             
             if (containsA && containsB && !containsC)
@@ -107,13 +107,13 @@
                 result.vertices[result.numberOfVertices+2] = x;
                 
                 result.numberOfVertices += 3;
-
+                
                 result.vertices[result.numberOfVertices] = b;
                 result.vertices[result.numberOfVertices+1] = x;
                 result.vertices[result.numberOfVertices+2] = y;
                 
                 result.numberOfVertices += 3;
-
+                
             } else if (!containsA && containsB && containsC)
             {
                 CWVertex x = [shape intersectLineFrom:b to:a];
@@ -148,9 +148,151 @@
                 
                 result.numberOfVertices += 3;
                 
-            }
-
+            }   
+        } else {
+            // push through for animation
             
+            CWVertex zero = a;
+            zero.x = 0.5f;
+            zero.y=0.5f;
+            
+            a = [shape intersectLineFrom:zero to:a];
+            b = a;
+            c = a;
+            
+            result.vertices[result.numberOfVertices] = a;
+            result.vertices[result.numberOfVertices+1] = b;
+            result.vertices[result.numberOfVertices+2] = c;
+            
+            result.numberOfVertices += 3;
+
+        }
+    }
+    
+    return result;
+}
+
+
++ (CWTriangles)intersectTriangles2:(CWTriangles)triangles withWindowShape:(CWWindowShape*)shape
+{
+    CWTriangles result;
+    result.numberOfVertices = 0;
+    result.vertices = malloc(triangles.numberOfVertices * sizeof(CWVertex)*3);
+    
+    for (int i = 0; i<triangles.numberOfVertices;i+=3)
+    {
+        CWVertex a = triangles.vertices[i];
+        CWVertex b = triangles.vertices[i+1];
+        CWVertex c = triangles.vertices[i+2];
+
+        BOOL containsA1 = [shape containsPointU:a.x V:a.y];
+        BOOL containsB1 = [shape containsPointU:b.x V:b.y];
+        BOOL containsC1 = [shape containsPointU:c.x V:c.y];
+
+        BOOL containsA = [shape containsPointU:a.x2 V:a.y2];
+        BOOL containsB = [shape containsPointU:b.x2 V:b.y2];
+        BOOL containsC = [shape containsPointU:c.x2 V:c.y2];
+        
+        if (containsA || containsB || containsC || containsA1 || containsB1 || containsC1)
+        {
+            if (containsA && containsB && containsC)
+            {
+                // as is
+                
+                result.vertices[result.numberOfVertices] = a;
+                result.vertices[result.numberOfVertices+1] = b;
+                result.vertices[result.numberOfVertices+2] = c;
+                
+                result.numberOfVertices += 3;
+            }
+            
+            if (containsA && !containsB && !containsC)
+            {
+                b = [shape intersectLine2From:a to:b];
+                c = [shape intersectLine2From:a to:c];
+                
+                result.vertices[result.numberOfVertices] = a;
+                result.vertices[result.numberOfVertices+1] = b;
+                result.vertices[result.numberOfVertices+2] = c;
+                
+                result.numberOfVertices += 3;
+                
+            } else if (containsB && !containsA && !containsC)
+            {
+                a = [shape intersectLine2From:b to:a];
+                c = [shape intersectLine2From:b to:c];
+                
+                result.vertices[result.numberOfVertices] = a;
+                result.vertices[result.numberOfVertices+1] = b;
+                result.vertices[result.numberOfVertices+2] = c;
+                
+                result.numberOfVertices += 3;
+                
+            } else if (containsC && !containsB && !containsA)
+            {
+                b = [shape intersectLine2From:c to:b];
+                a = [shape intersectLine2From:c to:a];
+                
+                result.vertices[result.numberOfVertices] = a;
+                result.vertices[result.numberOfVertices+1] = b;
+                result.vertices[result.numberOfVertices+2] = c;
+                
+                result.numberOfVertices += 3;
+                
+            }
+            
+            if (containsA && containsB && !containsC)
+            {
+                CWVertex x = [shape intersectLine2From:a to:c];
+                CWVertex y = [shape intersectLine2From:b to:c];
+                
+                result.vertices[result.numberOfVertices] = a;
+                result.vertices[result.numberOfVertices+1] = b;
+                result.vertices[result.numberOfVertices+2] = x;
+                
+                result.numberOfVertices += 3;
+                
+                result.vertices[result.numberOfVertices] = b;
+                result.vertices[result.numberOfVertices+1] = x;
+                result.vertices[result.numberOfVertices+2] = y;
+                
+                result.numberOfVertices += 3;
+                
+            } else if (!containsA && containsB && containsC)
+            {
+                CWVertex x = [shape intersectLine2From:b to:a];
+                CWVertex y = [shape intersectLine2From:c to:a];
+                
+                result.vertices[result.numberOfVertices] = b;
+                result.vertices[result.numberOfVertices+1] = c;
+                result.vertices[result.numberOfVertices+2] = x;
+                
+                result.numberOfVertices += 3;
+                
+                result.vertices[result.numberOfVertices] = c;
+                result.vertices[result.numberOfVertices+1] = x;
+                result.vertices[result.numberOfVertices+2] = y;
+                
+                result.numberOfVertices += 3;
+                
+            } else if (containsA && !containsB && containsC)
+            {
+                CWVertex x = [shape intersectLine2From:a to:b];
+                CWVertex y = [shape intersectLine2From:c to:b];
+                
+                result.vertices[result.numberOfVertices] = a;
+                result.vertices[result.numberOfVertices+1] = c;
+                result.vertices[result.numberOfVertices+2] = x;
+                
+                result.numberOfVertices += 3;
+                
+                result.vertices[result.numberOfVertices] = c;
+                result.vertices[result.numberOfVertices+1] = x;
+                result.vertices[result.numberOfVertices+2] = y;
+                
+                result.numberOfVertices += 3;
+                
+            }   
         }
     }
     

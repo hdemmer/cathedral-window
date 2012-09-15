@@ -377,13 +377,6 @@
     
     
     return result;
-    
-    // TODO:
-    /*
-     CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:self.windowShape];
-     free(result.vertices);
-     result = newResult;
-     */
 }
 
 
@@ -408,6 +401,14 @@ float cwRandom(float min, float max)
     
     CWTriangles result = [self segmentIntoTriangles];
     
+    CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:self.windowShape];
+     free(result.vertices);
+     result = newResult;
+
+    newResult = [CWTriangleProcessor intersectTriangles2:result withWindowShape:self.windowShape];
+    free(result.vertices);
+    result = newResult;
+
     _numVertices = result.numberOfVertices;
     
     CWVertex * vertices = result.vertices;
@@ -486,12 +487,10 @@ float cwRandom(float min, float max)
 
 - (BOOL)containsPoint:(GLKVector3)point
 {
-    CWVertex v;
-    v.x = (point.x - self.origin.x)/_scale + 0.5f;
-    v.y = (point.y - self.origin.y)/_scale + 0.5f;
-    v.z = 0.0f;
+    float u= (point.x - self.origin.x)/_scale + 0.5f;
+    float v= (point.y - self.origin.y)/_scale + 0.5f;
     
-    return [self.windowShape containsVertex:v];
+    return [self.windowShape containsPointU:u V:v];
     
 }
 
