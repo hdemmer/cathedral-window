@@ -216,10 +216,10 @@
                 // remove in animation
                 
                 CWVertex zero = a;
-                zero.x = 0.5f;
-                zero.y=0.5f;
-                
-                a = [shape intersectLine2From:zero to:a];
+                zero.x2 = 0.5f;
+                zero.y2=0.5f;
+                                    
+               a = [shape intersectLine2From:zero to:a];
                 b = [shape intersectLine2From:zero to:b];
                 c = [shape intersectLine2From:zero to:c];
                     
