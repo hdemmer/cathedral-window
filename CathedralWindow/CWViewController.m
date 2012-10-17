@@ -46,6 +46,9 @@ GLint uniforms[NUM_UNIFORMS];
     
     NSTimeInterval _lastRandomImage;
     NSInteger _lastRandomIndex;
+    
+    GLKVector3 _lastEye;
+    GLKMatrix4 _lastMVP;
 }
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) ALAssetsLibrary * assetsLibrary;
@@ -259,6 +262,8 @@ GLint uniforms[NUM_UNIFORMS];
     glDisable(GL_BLEND);
 //    glBlendFunc(GL_ONE, GL_SRC_COLOR);
     
+    glClearColor(0.01f, 0.01f, 0.02f, 1.0f);
+    
     _zoom = 4.0f;
     
     CWWindowShape * shape = [[CWWindowShape alloc] init];
@@ -295,6 +300,17 @@ GLint uniforms[NUM_UNIFORMS];
     }];
     
     glUseProgram(_program);
+    
+    glUniform1i(uniforms[UNIFORM_TEXTURE_SAMPLER], 0);
+    
+    float t = 4.0f;
+    
+    GLKVector3 sunVector = GLKVector3Normalize(GLKVector3Make(cosf(t), -0.4*sinf(t),sinf(t)));
+    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], sunVector.x, sunVector.y, sunVector.z);
+    glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
+    
+    glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.3+0.1*sinf(t));
+
 }
 
 - (void)tearDownGL
@@ -378,29 +394,31 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    glClearColor(0.01f, 0.01f, 0.02f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    GLKVector3 eye = [self eyePosition];
-    glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
     float theTime = [[CWTimeSingleton sharedInstance] currentTime];
     glUniform1f(uniforms[UNIFORM_THE_TIME], theTime);
+
+    GLKVector3 eye = [self eyePosition];
+    if (GLKVector3Length(GLKVector3Subtract(eye, _lastEye)))
+    {
+        glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
+        _lastEye = eye;
+    }
     
-    glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
+    BOOL equalMVP = YES;
+    for (int i=0;i<16;i++)
+    {
+        if (!(_modelViewProjectionMatrix.m[i] == _lastMVP.m[i]))
+            equalMVP = NO;
+    }
+    if (!equalMVP)
+    {
+        glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
+        _lastMVP = _modelViewProjectionMatrix;
+    }
     
-    float t = self.timeSinceFirstResume;
-    
-    t = 4;
-    
-    GLKVector3 sunVector = GLKVector3Normalize(GLKVector3Make(cosf(t), -0.4*sinf(t),sinf(t)));
-    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], sunVector.x, sunVector.y, sunVector.z);
-    glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
-    
-    glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.3+0.1*sinf(t));
-    
-    glActiveTexture(GL_TEXTURE0);
-    glUniform1i(uniforms[UNIFORM_TEXTURE_SAMPLER], 0);
-    
+
     for (CWWindow * window in self.windows)
     {
         [window draw];

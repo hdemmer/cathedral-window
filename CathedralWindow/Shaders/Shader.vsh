@@ -17,8 +17,9 @@ attribute float animationStartTime;
 
 varying lowp vec4 colorBaseAndIntensityDirectV;
 varying lowp vec4 colorGlowAndLambdaV;
-varying lowp vec4 texCoordsV;
 varying lowp vec4 localCoordsV;
+varying lowp vec2 texCoordsV;
+varying lowp vec2 texCoords2V;
 
 uniform mat4 modelViewProjectionMatrix;
 
@@ -50,8 +51,8 @@ void main()
     vec3 colorGlow = mix(diffuse,luma*vec3(1.0,1.0,1.0), -1.5) * glowCoeff;  // kick out sat
     vec3 colorGlow2 = mix(diffuse2,luma*vec3(1.0,1.0,1.0), -1.5) * glowCoeff;  // kick out sat
     
-    texCoordsV.xy = texCoords;
-    texCoordsV.zw = texCoords2;
+    texCoordsV = texCoords;
+    texCoords2V = texCoords2;
     localCoordsV=localCoords;
     
     float lambda = smoothstep(0.0,1.0,clamp(theTime - animationStartTime, 0.0,1.0));
