@@ -392,7 +392,8 @@ GLint uniforms[NUM_UNIFORMS];
     
     t = 4;
     
-    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], cosf(t), -0.4*sinf(t),sinf(t));
+    GLKVector3 sunVector = GLKVector3Normalize(GLKVector3Make(cosf(t), -0.4*sinf(t),sinf(t)));
+    glUniform3f(uniforms[UNIFORM_SUN_VECTOR], sunVector.x, sunVector.y, sunVector.z);
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
     
     glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.3+0.1*sinf(t));

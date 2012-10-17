@@ -33,9 +33,9 @@ void main()
 {
     vec3 normal = vec3(0.0,0.0,1.0);
     
-    float sunAngle = clamp((dot(normalize(sunVector), normalize(position-eyePosition))+1.0)*0.25,0.0,1.0);
+    float sunAngle = clamp((dot(sunVector, normalize(position-eyePosition))+1.0)*0.25,0.0,1.0);
         
-    float sunAngleToNormal = dot(normalize(sunVector), normal);
+    float sunAngleToNormal = dot(sunVector, normal);
     
     float glowCoeff = (clamp(sunAngleToNormal,0.0,1.0) + sunAngle)*0.5;
 
