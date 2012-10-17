@@ -161,27 +161,24 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void)loadAssets
 {
-    self.assetsLibrary = [[ALAssetsLibrary alloc]   init];
+    self.assetsLibrary = [[ALAssetsLibrary alloc] init];
     self.mutableAssets = [NSMutableArray arrayWithCapacity:1024];
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
-                
-        [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-            if ([group numberOfAssets])
-            {
-                
-                [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                    if (result)
-                    {
-                        [self.mutableAssets addObject:result];
-                    }
-                } ];
-            }
-        } failureBlock:^(NSError *error) {
-            NSLog(@"fail");
-        }];
-    });
-
+    [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+        if ([group numberOfAssets])
+        {
+            
+            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                if (result)
+                {
+                    [self.mutableAssets addObject:result];
+                }
+            } ];
+        }
+    } failureBlock:^(NSError *error) {
+        NSLog(@"fail");
+    }];
+    
 }
 
 - (void)viewDidLoad
@@ -210,7 +207,7 @@ GLint uniforms[NUM_UNIFORMS];
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     
     [self setupGL];
-    [self loadAssets];
+    [self performSelectorInBackground:@selector(loadAssets) withObject:nil];
 }
 
 - (void)viewDidUnload
@@ -240,7 +237,10 @@ GLint uniforms[NUM_UNIFORMS];
 - (void) randomImageForWindow:(CWWindow*)window
 {
     if (![self.mutableAssets count])
+    {
+        [self performSelector:@selector(randomImageForWindow:) withObject:window afterDelay:1.0];
         return;
+    }
     
     NSInteger i = rand() % [self.mutableAssets count];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
@@ -286,6 +286,7 @@ GLint uniforms[NUM_UNIFORMS];
         
         [mutableWindows addObject:[[CWWindow alloc] initWithOrigin:origin2 scale:0.25 andWindowShape:shape]];
     }
+    
     
     self.windows = [NSArray arrayWithArray:mutableWindows];
     
