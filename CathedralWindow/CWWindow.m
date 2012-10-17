@@ -178,12 +178,12 @@ dispatch_queue_t windowQueue=nil;
     unsigned char *hueData[2] = {(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char)),(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char))};
     unsigned char *lumaData[2] = {(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char)),(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char))};
     
+    for (int i=0; i<2;i++)
+    {
     for (int x = 0; x < IMAGE_SIZE; x++)
     {
         for (int y = 0; y < IMAGE_SIZE; y++)
         {
-            for (int i=0; i<2;i++)
-            {
                 float r = rawData[i][(x+y*width)*4]/255.0f;
                 float g = rawData[i][(x+y*width)*4+1] / 255.0f;
                 float b = rawData[i][(x+y*width)*4+2] /255.0f;
@@ -201,13 +201,13 @@ dispatch_queue_t windowQueue=nil;
     
     unsigned char *sobelData[2] = {(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char)),(unsigned char*) calloc(IMAGE_SIZE * IMAGE_SIZE, sizeof(unsigned char))};
     
+    for (int i=0; i<2;i++)
+    {
     for (int x = 1; x < IMAGE_SIZE-1; x++)
     {
         for (int y = 1; y < IMAGE_SIZE-1; y++)
         {
-            for (int i=0; i<2;i++)
-            {
-                
+            
                 float xgrad =
                 -1 * hueData[i][(y-1) * IMAGE_SIZE + x-1] +
                 -2 * hueData[i][y * IMAGE_SIZE + x-1] +
@@ -447,13 +447,11 @@ dispatch_queue_t windowQueue=nil;
         newResult = [CWTriangleProcessor intersectTriangles2:result withWindowShape:self.windowShape];
         free(result.vertices);
         result = newResult;
-        
-        _numVertices = result.numberOfVertices;
-        
+                
         CWVertex * vertices = result.vertices;
         
         // set local coordinates
-        for (int i =0; i< _numVertices; i+=3)
+        for (int i =0; i< result.numberOfVertices; i+=3)
         {
             vertices[i].l1 = 1;
             vertices[i].l2 = 0;
@@ -469,7 +467,7 @@ dispatch_queue_t windowQueue=nil;
         }
         
         // translate and tex coords
-        for (int i =0; i< _numVertices; i++)
+        for (int i =0; i< result.numberOfVertices; i++)
         {
             vertices[i].u = vertices[i].x;
             vertices[i].v = vertices[i].y;
@@ -488,6 +486,8 @@ dispatch_queue_t windowQueue=nil;
         
         dispatch_async(dispatch_get_main_queue(), ^{
             
+            _numVertices = result.numberOfVertices;
+
             glBindVertexArrayOES(_vertexArray);
             glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
             glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*_numVertices, vertices, GL_STATIC_DRAW);
