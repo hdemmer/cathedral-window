@@ -48,6 +48,8 @@ GLint uniforms[NUM_UNIFORMS];
     NSInteger _lastRandomIndex;
 }
 @property (strong, nonatomic) EAGLContext *context;
+@property (strong, nonatomic) ALAssetsLibrary * assetsLibrary;
+@property (strong, nonatomic) NSMutableArray * mutableAssets;
 
 - (void)setupGL;
 - (void)tearDownGL;
@@ -63,6 +65,8 @@ GLint uniforms[NUM_UNIFORMS];
 @synthesize context = _context;
 @synthesize windows=_windows;
 @synthesize toolbar = _toolbar;
+@synthesize assetsLibrary=_assetsLibrary;
+@synthesize mutableAssets = _mutableAssets;
 
 #define MAX_PAN 300
 
@@ -155,6 +159,31 @@ GLint uniforms[NUM_UNIFORMS];
         _zoom = 1.0;
 }
 
+- (void)loadAssets
+{
+    self.assetsLibrary = [[ALAssetsLibrary alloc]   init];
+    self.mutableAssets = [NSMutableArray arrayWithCapacity:1024];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+                
+        [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+            if ([group numberOfAssets])
+            {
+                
+                [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                    if (result)
+                    {
+                        [self.mutableAssets addObject:result];
+                    }
+                } ];
+            }
+        } failureBlock:^(NSError *error) {
+            NSLog(@"fail");
+        }];
+    });
+
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -181,10 +210,11 @@ GLint uniforms[NUM_UNIFORMS];
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     
     [self setupGL];
+    [self loadAssets];
 }
 
 - (void)viewDidUnload
-{    
+{
     [self setToolbar:nil];
     [super viewDidUnload];
     
@@ -209,26 +239,14 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void) randomImageForWindow:(CWWindow*)window
 {
-    __block UIImage * image = nil;
+    if (![self.mutableAssets count])
+        return;
     
-    ALAssetsLibrary *al = [[ALAssetsLibrary alloc] init];
-    
-    [al enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-        if ([group numberOfAssets])
-        {
-            NSInteger i = rand() % [group numberOfAssets];
-            
-            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                if (index == i)
-                {
-                    image = [UIImage imageWithCGImage:[result thumbnail]];
-                    [window performSelectorOnMainThread:@selector(pushImage:) withObject:image waitUntilDone:YES];
-                }
-            } ];
-        }
-    } failureBlock:^(NSError *error) {
-        NSLog(@"fail");
-    }];   
+    NSInteger i = rand() % [self.mutableAssets count];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+        ALAsset * asset = [self.mutableAssets objectAtIndex:i];
+        [window pushImage:[UIImage imageWithCGImage:[asset thumbnail]]];
+    });
 }
 
 - (void)setupGL
@@ -238,7 +256,6 @@ GLint uniforms[NUM_UNIFORMS];
     [self loadShaders];
     
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_SRC_COLOR);
     
@@ -275,6 +292,8 @@ GLint uniforms[NUM_UNIFORMS];
     [self.windows enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         [self randomImageForWindow:(CWWindow*)obj];
     }];
+    
+    glUseProgram(_program);
 }
 
 - (void)tearDownGL
@@ -315,8 +334,8 @@ GLint uniforms[NUM_UNIFORMS];
     [[CWTimeSingleton sharedInstance] addTime:self.timeSinceLastUpdate];
     
     NSTimeInterval t = [[CWTimeSingleton sharedInstance] currentTime];
-    /*
-    if (t - _lastRandomImage > 0.3)
+    
+    if (t - _lastRandomImage > 1.0)
     {
         NSInteger windowIndex = rand() % [self.windows count];
         
@@ -328,7 +347,7 @@ GLint uniforms[NUM_UNIFORMS];
             _lastRandomIndex = windowIndex;
         }
     }
-     */
+    
     
     _animationLambda += self.timeSinceLastUpdate/2.0;
     if (_animationLambda > 1)
@@ -337,7 +356,6 @@ GLint uniforms[NUM_UNIFORMS];
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
     _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
     
-    GLKVector3 eye = [self eyePosition];
     GLKVector3 lookAt = _lookAt;
     
     GLKVector3 targetLookAt = GLKVector3Make(0, 0, 0);
@@ -349,10 +367,7 @@ GLint uniforms[NUM_UNIFORMS];
     lookAt = GLKVector3Lerp(lookAt, targetLookAt, _animationLambda);
     _lookAt = lookAt;
     
-    glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
-    float theTime = [[CWTimeSingleton sharedInstance] currentTime];
-    glUniform1f(uniforms[UNIFORM_THE_TIME], theTime);
-    
+    GLKVector3 eye = [self eyePosition];
     _modelViewMatrix = GLKMatrix4MakeLookAt(eye.x,eye.y,eye.z, lookAt.x, lookAt.y, lookAt.z, 0, 1, 0);
     
     _modelViewProjectionMatrix = GLKMatrix4Multiply(_projectionMatrix, _modelViewMatrix);
@@ -363,8 +378,10 @@ GLint uniforms[NUM_UNIFORMS];
     glClearColor(0.01f, 0.01f, 0.02f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    // Render the object again with ES2
-    glUseProgram(_program);
+    GLKVector3 eye = [self eyePosition];
+    glUniform3f(uniforms[UNIFORM_EYE_POSITION], eye.x, eye.y,eye.z);
+    float theTime = [[CWTimeSingleton sharedInstance] currentTime];
+    glUniform1f(uniforms[UNIFORM_THE_TIME], theTime);
     
     glUniformMatrix4fv(uniforms[UNIFORM_MODELVIEWPROJECTION_MATRIX], 1, 0, _modelViewProjectionMatrix.m);
     
@@ -558,7 +575,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     [UIView animateWithDuration:0.5 animations:^{
         self.toolbar.alpha = 0.0f;
-    }];    
+    }];
 }
 
 - (IBAction)donePressed:(id)sender {

@@ -24,10 +24,13 @@ float cwRandom(float min, float max)
     int _numVertices;
     float _scale;
     
+    BOOL _isInitialized;
     BOOL _busy;
 }
 @property (nonatomic,strong) CWWindowShape*windowShape;
 @end
+
+dispatch_queue_t windowQueue=nil;
 
 @implementation CWWindow
 @synthesize origin=_origin;
@@ -50,6 +53,10 @@ float cwRandom(float min, float max)
         glGenBuffers(1, &_vertexBuffer);
         glGenTextures(2, _textures);
         
+        if (!windowQueue)
+        {
+            windowQueue = dispatch_queue_create("com.windowoperations", DISPATCH_QUEUE_SERIAL);
+        }
     }
     
     return self;
@@ -57,6 +64,12 @@ float cwRandom(float min, float max)
 
 -(void)dealloc
 {
+    if (windowQueue)
+    {
+        dispatch_release(windowQueue);
+        windowQueue = nil;
+    }
+    
     glDeleteBuffers(1, &_vertexBuffer);
     glDeleteVertexArraysOES(1, &_vertexArray);
     
@@ -70,7 +83,7 @@ float cwRandom(float min, float max)
 - (UIImage*)image:(UIImage*)image ByScalingAndCroppingForSize:(CGSize)targetSize
 {
     UIImage *sourceImage = image;
-    UIImage *newImage = nil;        
+    UIImage *newImage = nil;
     CGSize imageSize = sourceImage.size;
     CGFloat width = imageSize.width;
     CGFloat height = imageSize.height;
@@ -81,12 +94,12 @@ float cwRandom(float min, float max)
     CGFloat scaledHeight = targetHeight;
     CGPoint thumbnailPoint = CGPointMake(0.0,0.0);
     
-    if (CGSizeEqualToSize(imageSize, targetSize) == NO) 
+    if (CGSizeEqualToSize(imageSize, targetSize) == NO)
     {
         CGFloat widthFactor = targetWidth / width;
         CGFloat heightFactor = targetHeight / height;
         
-        if (widthFactor > heightFactor) 
+        if (widthFactor > heightFactor)
             scaleFactor = widthFactor; // scale to fit height
         else
             scaleFactor = heightFactor; // scale to fit width
@@ -96,14 +109,14 @@ float cwRandom(float min, float max)
         // center the image
         if (widthFactor > heightFactor)
         {
-            thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5; 
+            thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5;
         }
-        else 
+        else
             if (widthFactor < heightFactor)
             {
                 thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5;
             }
-    }       
+    }
     
     UIGraphicsBeginImageContext(targetSize); // this will crop
     
@@ -115,7 +128,7 @@ float cwRandom(float min, float max)
     [sourceImage drawInRect:thumbnailRect];
     
     newImage = UIGraphicsGetImageFromCurrentImageContext();
-    if(newImage == nil) 
+    if(newImage == nil)
         NSLog(@"could not scale image");
     
     //pop the context to get back to the default
@@ -195,7 +208,7 @@ float cwRandom(float min, float max)
             for (int i=0; i<2;i++)
             {
                 
-                float xgrad = 
+                float xgrad =
                 -1 * hueData[i][(y-1) * IMAGE_SIZE + x-1] +
                 -2 * hueData[i][y * IMAGE_SIZE + x-1] +
                 -1 * hueData[i][(y+1) * IMAGE_SIZE + x-1] +
@@ -220,21 +233,29 @@ float cwRandom(float min, float max)
     
     // tex
     
-    glBindTexture(GL_TEXTURE_2D, _textures[0]);
+    unsigned char * luma1 = lumaData[0];
+    unsigned char * luma2 = lumaData[1];
     
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        
+        glBindTexture(GL_TEXTURE_2D, _textures[0]);
+        
+        //    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, IMAGE_SIZE, IMAGE_SIZE, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, luma1);
+        
+        glBindTexture(GL_TEXTURE_2D, _textures[1]);
+        
+        //    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, IMAGE_SIZE, IMAGE_SIZE, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, luma2);
+        
+    });
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, IMAGE_SIZE, IMAGE_SIZE, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, lumaData[0]);
-    
-    glBindTexture(GL_TEXTURE_2D, _textures[1]);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, IMAGE_SIZE, IMAGE_SIZE, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, lumaData[1]);
     
     // calculate nodes
     
@@ -344,7 +365,7 @@ float cwRandom(float min, float max)
     int numVertices = (gridWidth-1)*(gridWidth-1)*6;
     
     CWVertex * vertices = malloc(numVertices * sizeof(CWVertex));
-
+    
     for (int x=0; x<gridWidth-1; x++)
     {
         for (int y=0; y<gridWidth-1; y++)
@@ -407,103 +428,107 @@ float cwRandom(float min, float max)
         return;
     _busy = YES;
     
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(windowQueue, ^{
         
-    self.currentImage = self.nextImage;
-    self.nextImage = [self image:image ByScalingAndCroppingForSize:CGSizeMake(IMAGE_SIZE, IMAGE_SIZE)];
-    
-    if (!self.currentImage)
         self.currentImage = self.nextImage;
-    
-    // triangles
-    
-    CWTriangles result = [self segmentIntoTriangles];
-    
-    CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:self.windowShape];
-     free(result.vertices);
-     result = newResult;
-
-    newResult = [CWTriangleProcessor intersectTriangles2:result withWindowShape:self.windowShape];
-    free(result.vertices);
-    result = newResult;
-
-    _numVertices = result.numberOfVertices;
-    
-    CWVertex * vertices = result.vertices;
-    
-    // set local coordinates
-    for (int i =0; i< _numVertices; i+=3)
-    {
-        vertices[i].l1 = 1;
-        vertices[i].l2 = 0;
-        vertices[i].l3 = 0;
+        self.nextImage = [self image:image ByScalingAndCroppingForSize:CGSizeMake(IMAGE_SIZE, IMAGE_SIZE)];
         
-        vertices[i+1].l1 = 0;
-        vertices[i+1].l2 = 1;
-        vertices[i+1].l3 = 0;
+        if (!self.currentImage)
+            self.currentImage = self.nextImage;
         
-        vertices[i+2].l1 = 0;
-        vertices[i+2].l2 = 0;
-        vertices[i+2].l3 = 1;
-    }
-    
-    // translate and tex coords
-    for (int i =0; i< _numVertices; i++)
-    {
-        vertices[i].u = vertices[i].x;
-        vertices[i].v = vertices[i].y;
+        // triangles
         
-        vertices[i].u2 = vertices[i].x2;
-        vertices[i].v2 = vertices[i].y2;
+        CWTriangles result = [self segmentIntoTriangles];
         
-        vertices[i].x = (-0.5 + vertices[i].x)*_scale + self.origin.x;
-        vertices[i].y = (-0.5 + vertices[i].y)*_scale + self.origin.y;
-        vertices[i].z += self.origin.z;
-        
-        vertices[i].x2 = (-0.5 + vertices[i].x2)*_scale + self.origin.x;
-        vertices[i].y2 = (-0.5 + vertices[i].y2)*_scale + self.origin.y;
-        vertices[i].z2 += self.origin.z;
-    }
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        glBindVertexArrayOES(_vertexArray);
-        glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*_numVertices, vertices, GL_STATIC_DRAW);
-        
+        CWTriangles newResult = [CWTriangleProcessor intersectTriangles:result withWindowShape:self.windowShape];
         free(result.vertices);
+        result = newResult;
         
-        // and finish
+        newResult = [CWTriangleProcessor intersectTriangles2:result withWindowShape:self.windowShape];
+        free(result.vertices);
+        result = newResult;
         
-        glEnableVertexAttribArray(ATTRIB_VERTEX);
-        glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 84, 0);
-        glEnableVertexAttribArray(ATTRIB_COLOR);
-        glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(12));
-        glEnableVertexAttribArray(ATTRIB_TEXCOORDS);
-        glVertexAttribPointer(ATTRIB_TEXCOORDS, 2, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(24));
-        glEnableVertexAttribArray(ATTRIB_LOCALCOORDS);
-        glVertexAttribPointer(ATTRIB_LOCALCOORDS, 4, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(32));
+        _numVertices = result.numberOfVertices;
         
-        glEnableVertexAttribArray(ATTRIB_VERTEX2);
-        glVertexAttribPointer(ATTRIB_VERTEX2, 3, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(48));
-        glEnableVertexAttribArray(ATTRIB_COLOR2);
-        glVertexAttribPointer(ATTRIB_COLOR2, 3, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(60));
-        glEnableVertexAttribArray(ATTRIB_TEXCOORDS2);
-        glVertexAttribPointer(ATTRIB_TEXCOORDS2, 2, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(72));
-        glEnableVertexAttribArray(ATTRIB_ANIMATION_START_TIME);
-        glVertexAttribPointer(ATTRIB_ANIMATION_START_TIME, 1, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(80));
+        CWVertex * vertices = result.vertices;
         
-        glBindVertexArrayOES(0);
+        // set local coordinates
+        for (int i =0; i< _numVertices; i+=3)
+        {
+            vertices[i].l1 = 1;
+            vertices[i].l2 = 0;
+            vertices[i].l3 = 0;
+            
+            vertices[i+1].l1 = 0;
+            vertices[i+1].l2 = 1;
+            vertices[i+1].l3 = 0;
+            
+            vertices[i+2].l1 = 0;
+            vertices[i+2].l2 = 0;
+            vertices[i+2].l3 = 1;
+        }
         
-        _busy = NO;
-
+        // translate and tex coords
+        for (int i =0; i< _numVertices; i++)
+        {
+            vertices[i].u = vertices[i].x;
+            vertices[i].v = vertices[i].y;
+            
+            vertices[i].u2 = vertices[i].x2;
+            vertices[i].v2 = vertices[i].y2;
+            
+            vertices[i].x = (-0.5 + vertices[i].x)*_scale + self.origin.x;
+            vertices[i].y = (-0.5 + vertices[i].y)*_scale + self.origin.y;
+            vertices[i].z += self.origin.z;
+            
+            vertices[i].x2 = (-0.5 + vertices[i].x2)*_scale + self.origin.x;
+            vertices[i].y2 = (-0.5 + vertices[i].y2)*_scale + self.origin.y;
+            vertices[i].z2 += self.origin.z;
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            glBindVertexArrayOES(_vertexArray);
+            glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(CWVertex)*_numVertices, vertices, GL_STATIC_DRAW);
+            
+            free(result.vertices);
+            
+            // and finish
+            
+            glEnableVertexAttribArray(ATTRIB_VERTEX);
+            glVertexAttribPointer(ATTRIB_VERTEX, 3, GL_FLOAT, GL_FALSE, 84, 0);
+            glEnableVertexAttribArray(ATTRIB_COLOR);
+            glVertexAttribPointer(ATTRIB_COLOR, 3, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(12));
+            glEnableVertexAttribArray(ATTRIB_TEXCOORDS);
+            glVertexAttribPointer(ATTRIB_TEXCOORDS, 2, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(24));
+            glEnableVertexAttribArray(ATTRIB_LOCALCOORDS);
+            glVertexAttribPointer(ATTRIB_LOCALCOORDS, 4, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(32));
+            
+            glEnableVertexAttribArray(ATTRIB_VERTEX2);
+            glVertexAttribPointer(ATTRIB_VERTEX2, 3, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(48));
+            glEnableVertexAttribArray(ATTRIB_COLOR2);
+            glVertexAttribPointer(ATTRIB_COLOR2, 3, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(60));
+            glEnableVertexAttribArray(ATTRIB_TEXCOORDS2);
+            glVertexAttribPointer(ATTRIB_TEXCOORDS2, 2, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(72));
+            glEnableVertexAttribArray(ATTRIB_ANIMATION_START_TIME);
+            glVertexAttribPointer(ATTRIB_ANIMATION_START_TIME, 1, GL_FLOAT, GL_FALSE, 84, BUFFER_OFFSET(80));
+            
+            glBindVertexArrayOES(0);
+            
+            _busy = NO;
+            _isInitialized = YES;
+            
+        });
     });
-    });
-
+    
 }
 
 - (void)draw
 {
+    if (!_isInitialized)
+        return;
+    
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _textures[0]);
     glActiveTexture(GL_TEXTURE1);
