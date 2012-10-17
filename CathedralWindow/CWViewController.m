@@ -10,6 +10,10 @@
 
 #import "CWWindow.h"
 
+#import "CWTimeSingleton.h"
+
+#import <AssetsLibrary/AssetsLibrary.h>
+
 // Uniform index.
 enum
 {
@@ -203,8 +207,6 @@ GLint uniforms[NUM_UNIFORMS];
     return YES;
 }
 
-#import <AssetsLibrary/AssetsLibrary.h>
-
 - (void) randomImageForWindow:(CWWindow*)window
 {
     __block UIImage * image = nil;
@@ -307,14 +309,13 @@ GLint uniforms[NUM_UNIFORMS];
 
 #pragma mark - GLKView and GLKViewController delegate methods
 
-#import "CWTimeSingleton.h"
 
 - (void)update
 {
     [[CWTimeSingleton sharedInstance] addTime:self.timeSinceLastUpdate];
     
     NSTimeInterval t = [[CWTimeSingleton sharedInstance] currentTime];
-    
+    /*
     if (t - _lastRandomImage > 0.3)
     {
         NSInteger windowIndex = rand() % [self.windows count];
@@ -327,6 +328,7 @@ GLint uniforms[NUM_UNIFORMS];
             _lastRandomIndex = windowIndex;
         }
     }
+     */
     
     _animationLambda += self.timeSinceLastUpdate/2.0;
     if (_animationLambda > 1)

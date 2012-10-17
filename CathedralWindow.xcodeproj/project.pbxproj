@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		FD423F601604BD7A00A9D6F6 /* CWTimeSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = FD423F5F1604BD7A00A9D6F6 /* CWTimeSingleton.m */; };
+		FD9ECDB2162EC5B200347AD7 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FD9ECDB1162EC5B200347AD7 /* Default-568h@2x.png */; };
 		FD9F42D515F3BE750092B98B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D415F3BE750092B98B /* UIKit.framework */; };
 		FD9F42D715F3BE750092B98B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D615F3BE750092B98B /* Foundation.framework */; };
 		FD9F42D915F3BE750092B98B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D815F3BE750092B98B /* CoreGraphics.framework */; };
@@ -47,6 +48,7 @@
 /* Begin PBXFileReference section */
 		FD423F5E1604BD7A00A9D6F6 /* CWTimeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWTimeSingleton.h; sourceTree = "<group>"; };
 		FD423F5F1604BD7A00A9D6F6 /* CWTimeSingleton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWTimeSingleton.m; sourceTree = "<group>"; };
+		FD9ECDB1162EC5B200347AD7 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		FD9F42D015F3BE750092B98B /* CathedralWindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CathedralWindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD9F42D415F3BE750092B98B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FD9F42D615F3BE750092B98B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -112,6 +114,7 @@
 		FD9F42C515F3BE750092B98B = {
 			isa = PBXGroup;
 			children = (
+				FD9ECDB1162EC5B200347AD7 /* Default-568h@2x.png */,
 				FD9F42DE15F3BE750092B98B /* CathedralWindow */,
 				FD9F430015F3BE750092B98B /* CathedralWindowTests */,
 				FD9F42D315F3BE750092B98B /* Frameworks */,
@@ -276,6 +279,7 @@
 				FD9F431A15F5556A0092B98B /* splash.jpg in Resources */,
 				FD9F432915FB44720092B98B /* smallWindow.png in Resources */,
 				FD9F432B15FB89650092B98B /* Ronan.jpg in Resources */,
+				FD9ECDB2162EC5B200347AD7 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,7 +376,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Hendrik Demmer (JX376LVTW8)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -387,6 +391,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "12D9E9E8-8382-4C15-AFF5-5491A39BC55F";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -406,6 +411,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
