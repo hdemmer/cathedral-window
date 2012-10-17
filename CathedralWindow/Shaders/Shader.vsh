@@ -15,16 +15,10 @@ attribute vec3 diffuse2;
 attribute vec2 texCoords2;
 attribute float animationStartTime;
 
-varying lowp vec3 colorBaseV;
-varying lowp vec3 colorGlowV;
-varying lowp vec3 colorBaseV2;
-varying lowp vec3 colorGlowV2;
-varying lowp float intensityDirectV;
-
-varying lowp vec2 texCoordsV;
-varying lowp vec2 texCoordsV2;
-varying lowp vec3 localCoordsV;
-varying lowp float lambda;
+varying lowp vec4 colorBaseAndIntensityDirectV;
+varying lowp vec4 colorGlowAndLambdaV;
+varying lowp vec4 texCoordsV;
+varying lowp vec4 localCoordsV;
 
 uniform mat4 modelViewProjectionMatrix;
 
@@ -55,18 +49,19 @@ void main()
     vec3 base2 = diffuse2 * ambientIntensity;
     vec3 colorGlow = mix(diffuse,luma*vec3(1.0,1.0,1.0), -1.5) * glowCoeff;  // kick out sat
     vec3 colorGlow2 = mix(diffuse2,luma*vec3(1.0,1.0,1.0), -1.5) * glowCoeff;  // kick out sat
-    intensityDirectV = sunAngle * luma*luma;
     
-    texCoordsV = texCoords;
-    texCoordsV2 = texCoords2;
-    localCoordsV=localCoords.xyz;
+    texCoordsV.xy = texCoords;
+    texCoordsV.zw = texCoords2;
+    localCoordsV=localCoords;
     
-    lambda = smoothstep(0.0,1.0,clamp(theTime - animationStartTime, 0.0,1.0));
+    float lambda = smoothstep(0.0,1.0,clamp(theTime - animationStartTime, 0.0,1.0));
     
     vec3 positionMix = mix(position,position2,lambda);
 
-    colorBaseV = mix(base, base2, lambda);
-    colorGlowV = mix(colorGlow, colorGlow2, lambda);
+    colorBaseAndIntensityDirectV.xyz = mix(base, base2, lambda);
+    colorBaseAndIntensityDirectV.w = 2.0 * sunAngle * luma * luma;
+    colorGlowAndLambdaV.xyz = mix(colorGlow, colorGlow2, lambda);
+    colorGlowAndLambdaV.w = lambda;
     
     gl_Position = modelViewProjectionMatrix * vec4(positionMix,1.0);
 }

@@ -256,8 +256,8 @@ GLint uniforms[NUM_UNIFORMS];
     [self loadShaders];
     
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_SRC_COLOR);
+    glDisable(GL_BLEND);
+//    glBlendFunc(GL_ONE, GL_SRC_COLOR);
     
     _zoom = 4.0f;
     
