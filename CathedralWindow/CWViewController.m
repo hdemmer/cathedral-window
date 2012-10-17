@@ -198,7 +198,6 @@ GLint uniforms[NUM_UNIFORMS];
     tapRecognizer.cancelsTouchesInView = NO;
     [self.view addGestureRecognizer:tapRecognizer];
     
-    
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     
     if (!self.context) {
@@ -207,7 +206,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     GLKView *view = (GLKView *)self.view;
     view.context = self.context;
-    view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+    view.drawableDepthFormat = GLKViewDrawableDepthFormatNone;
     
     [self setupGL];
     [self performSelectorInBackground:@selector(loadAssets) withObject:nil];
@@ -258,8 +257,9 @@ GLint uniforms[NUM_UNIFORMS];
     
     [self loadShaders];
     
-    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
+    glDisable(GL_ALPHA_TEST);
 //    glBlendFunc(GL_ONE, GL_SRC_COLOR);
     
     glClearColor(0.01f, 0.01f, 0.02f, 1.0f);
@@ -394,7 +394,7 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
     
     float theTime = [[CWTimeSingleton sharedInstance] currentTime];
     glUniform1f(uniforms[UNIFORM_THE_TIME], theTime);

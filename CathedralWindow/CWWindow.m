@@ -260,8 +260,8 @@ dispatch_queue_t windowQueue=nil;
     // calculate nodes
     
     int gridStep = GRID_STEP / (float)_scale;
-    if (gridStep > 16)
-        gridStep = 16;
+    if (gridStep > 32)
+        gridStep = 32;
     
     int gridWidth = IMAGE_SIZE / (float)gridStep;
     
