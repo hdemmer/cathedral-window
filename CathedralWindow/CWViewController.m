@@ -231,7 +231,7 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return YES;
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 - (void) randomImageForWindow:(CWWindow*)window
@@ -334,6 +334,8 @@ GLint uniforms[NUM_UNIFORMS];
 {
     [[CWTimeSingleton sharedInstance] addTime:self.timeSinceLastUpdate];
     
+    /*
+     // disabled for now, because it is irritating
     NSTimeInterval t = [[CWTimeSingleton sharedInstance] currentTime];
     
     if (t - _lastRandomImage > 1.0)
@@ -348,7 +350,7 @@ GLint uniforms[NUM_UNIFORMS];
             _lastRandomIndex = windowIndex;
         }
     }
-    
+    */
     
     _animationLambda += self.timeSinceLastUpdate/2.0;
     if (_animationLambda > 1)
