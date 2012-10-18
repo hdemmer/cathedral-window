@@ -15,11 +15,11 @@ attribute vec3 diffuse2;
 attribute vec2 texCoords2;
 attribute float animationStartTime;
 
-varying lowp vec4 colorBaseAndIntensityDirectV;
-varying lowp vec4 colorGlowAndLambdaV;
-varying lowp vec4 localCoordsV;
-varying lowp vec2 texCoordsV;
-varying lowp vec2 texCoords2V;
+varying mediump vec4 colorBaseAndIntensityDirectV;
+varying mediump vec4 colorGlowAndLambdaV;
+varying mediump vec4 localCoordsV;
+varying mediump vec2 texCoordsV;
+varying mediump vec2 texCoords2V;
 
 uniform mat4 modelViewProjectionMatrix;
 
