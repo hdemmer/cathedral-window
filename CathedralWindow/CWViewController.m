@@ -372,8 +372,11 @@ GLint uniforms[NUM_UNIFORMS];
     if (_animationLambda > 1)
         _animationLambda = 1;
     
+    float fov = 55.0f;
     float aspect = fabsf(self.view.bounds.size.width / self.view.bounds.size.height);
-    _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(55.0f), aspect, 0.1f, 100.0f);
+    if (aspect < 0.66)  // adjust for 4 inch iphone
+        fov = 70.0f;
+    _projectionMatrix = GLKMatrix4MakePerspective(GLKMathDegreesToRadians(fov), aspect, 0.1f, 100.0f);
     
     GLKVector3 lookAt = _lookAt;
     
