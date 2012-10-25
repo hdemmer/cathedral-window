@@ -25,6 +25,8 @@
 @property (nonatomic, retain) UIImage * nextImage;
 @property (nonatomic, retain) UIImage * currentImage;
 
+- (BOOL) isBusy;
+
 - (id)initWithOrigin:(GLKVector3)origin scale:(float)scale andWindowShape:(CWWindowShape*)shape;
 
 - (void) pushImage:(UIImage*)image;

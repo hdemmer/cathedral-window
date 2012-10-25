@@ -67,7 +67,6 @@ GLint uniforms[NUM_UNIFORMS];
 
 @synthesize context = _context;
 @synthesize windows=_windows;
-@synthesize toolbar = _toolbar;
 @synthesize assetsLibrary=_assetsLibrary;
 @synthesize mutableAssets = _mutableAssets;
 
@@ -92,16 +91,6 @@ GLint uniforms[NUM_UNIFORMS];
 {
     
     CGPoint location = [tapGestureRecognizer locationInView:self.view];
-    
-    if (_pickedWindow)
-    {
-        if (location.y < self.toolbar.frame.size.height)
-            return;
-    }
-    
-    /*[UIView animateWithDuration:0.5 animations:^{
-     self.toolbar.alpha = 1.0f;
-     }];*/
     
     GLKVector3 window_coord = GLKVector3Make(location.x,self.view.frame.size.height-location.y, 0.0f);
     bool result;
@@ -210,11 +199,13 @@ GLint uniforms[NUM_UNIFORMS];
     
     [self setupGL];
     [self performSelectorInBackground:@selector(loadAssets) withObject:nil];
+    
+    [self performSelector:@selector(updateBusyImageView) withObject:nil afterDelay:0.5];
 }
 
 - (void)viewDidUnload
 {
-    [self setToolbar:nil];
+    [self setBusyImageView:nil];
     [super viewDidUnload];
     
     [self tearDownGL];
@@ -236,6 +227,29 @@ GLint uniforms[NUM_UNIFORMS];
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+- (void) updateBusyImageView
+{
+    BOOL busy = NO;
+    for (CWWindow * window in self.windows)
+    {
+        if ([window isBusy])
+            busy = YES;
+    }
+    
+    if (busy)
+    {
+        [UIView animateWithDuration:0.6 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            self.busyImageView.alpha = 1.0f;
+        } completion:NULL];
+        
+        [self performSelector:@selector(updateBusyImageView) withObject:nil afterDelay:0.3];
+    } else {
+        [UIView animateWithDuration:0.6 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            self.busyImageView.alpha = 0.0f;
+        } completion:NULL];        
+    }
+}
+
 - (void) randomImageForWindow:(CWWindow*)window
 {
     if (![self.mutableAssets count])
@@ -249,6 +263,8 @@ GLint uniforms[NUM_UNIFORMS];
         ALAsset * asset = [self.mutableAssets objectAtIndex:i];
         [window pushImage:[UIImage imageWithCGImage:[asset thumbnail]]];
     });
+    
+    [self performSelector:@selector(updateBusyImageView) withObject:nil afterDelay:0.1];
 }
 
 - (void)setupGL
@@ -593,44 +609,4 @@ GLint uniforms[NUM_UNIFORMS];
     return YES;
 }
 
-- (void) deselectPickedWindow
-{
-    _pickedWindow = nil;
-    _animationLambda=0.0;
-    
-    [UIView animateWithDuration:0.5 animations:^{
-        self.toolbar.alpha = 0.0f;
-    }];
-}
-
-- (IBAction)donePressed:(id)sender {
-    [self deselectPickedWindow];
-}
-
-- (IBAction)cameraPressed:(id)sender {
-    if ([UIImagePickerController isSourceTypeAvailable:
-         UIImagePickerControllerSourceTypePhotoLibrary])
-    {
-        UIImagePickerController *imagePicker =
-        [[UIImagePickerController alloc] init];
-        imagePicker.delegate = self;
-        imagePicker.sourceType =
-        UIImagePickerControllerSourceTypePhotoLibrary;
-        imagePicker.allowsEditing = YES;
-        [self presentModalViewController:imagePicker
-                                animated:YES];
-    }
-}
-
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
-{
-    [_pickedWindow pushImage:image];
-    
-    [self deselectPickedWindow];
-    
-    [picker dismissModalViewControllerAnimated:YES];
-}
-
-- (IBAction)actionPressed:(id)sender {
-}
 @end

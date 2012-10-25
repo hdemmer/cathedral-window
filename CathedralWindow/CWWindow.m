@@ -524,6 +524,11 @@ dispatch_queue_t windowQueue=nil;
     
 }
 
+- (BOOL)isBusy
+{
+    return _busy;
+}
+
 - (void)draw
 {
     if (!_isInitialized)

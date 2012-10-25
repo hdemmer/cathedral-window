@@ -14,10 +14,6 @@
 @interface CWViewController : GLKViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (nonatomic, retain) NSArray * windows;
-
-@property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
-- (IBAction)donePressed:(id)sender;
-- (IBAction)cameraPressed:(id)sender;
-- (IBAction)actionPressed:(id)sender;
+@property (weak, nonatomic) IBOutlet UIImageView *busyImageView;
 
 @end
