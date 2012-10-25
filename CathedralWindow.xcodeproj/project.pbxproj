@@ -10,12 +10,12 @@
 		FD423F601604BD7A00A9D6F6 /* CWTimeSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = FD423F5F1604BD7A00A9D6F6 /* CWTimeSingleton.m */; };
 		FD6BE69F163983C300D9F97E /* empty.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE69E163983C300D9F97E /* empty.png */; };
 		FD6BE6A21639A20300D9F97E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6A01639A20300D9F97E /* Default@2x.png */; };
-		FD6BE6A31639A20300D9F97E /* Default~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6A11639A20300D9F97E /* Default~ipad@2x.png */; };
 		FD6BE6A51639A21200D9F97E /* glassblower@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6A41639A21200D9F97E /* glassblower@2x.png */; };
 		FD6BE6A81639A46F00D9F97E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6A61639A46F00D9F97E /* Default-568h@2x.png */; };
 		FD6BE6A91639A46F00D9F97E /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6A71639A46F00D9F97E /* Default.png */; };
-		FD6BE6AB1639A47500D9F97E /* Default~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6AA1639A47500D9F97E /* Default~ipad.png */; };
 		FD6BE6AD1639A48300D9F97E /* glassblower.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6AC1639A48300D9F97E /* glassblower.png */; };
+		FD6BE6AF1639AA4C00D9F97E /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6AE1639AA4C00D9F97E /* Default-Portrait~ipad.png */; };
+		FD6BE6B11639AA9200D9F97E /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6B01639AA9200D9F97E /* Default-Portrait@2x~ipad.png */; };
 		FD9F42D515F3BE750092B98B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D415F3BE750092B98B /* UIKit.framework */; };
 		FD9F42D715F3BE750092B98B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D615F3BE750092B98B /* Foundation.framework */; };
 		FD9F42D915F3BE750092B98B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D815F3BE750092B98B /* CoreGraphics.framework */; };
@@ -54,12 +54,12 @@
 		FD423F5F1604BD7A00A9D6F6 /* CWTimeSingleton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWTimeSingleton.m; sourceTree = "<group>"; };
 		FD6BE69E163983C300D9F97E /* empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = empty.png; sourceTree = "<group>"; };
 		FD6BE6A01639A20300D9F97E /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		FD6BE6A11639A20300D9F97E /* Default~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default~ipad@2x.png"; sourceTree = "<group>"; };
 		FD6BE6A41639A21200D9F97E /* glassblower@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glassblower@2x.png"; sourceTree = "<group>"; };
 		FD6BE6A61639A46F00D9F97E /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		FD6BE6A71639A46F00D9F97E /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		FD6BE6AA1639A47500D9F97E /* Default~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default~ipad.png"; sourceTree = "<group>"; };
 		FD6BE6AC1639A48300D9F97E /* glassblower.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glassblower.png; sourceTree = "<group>"; };
+		FD6BE6AE1639AA4C00D9F97E /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
+		FD6BE6B01639AA9200D9F97E /* Default-Portrait@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait@2x~ipad.png"; sourceTree = "<group>"; };
 		FD9F42D015F3BE750092B98B /* CathedralWindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CathedralWindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD9F42D415F3BE750092B98B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		FD9F42D615F3BE750092B98B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -122,6 +122,8 @@
 		FD9F42C515F3BE750092B98B = {
 			isa = PBXGroup;
 			children = (
+				FD6BE6B01639AA9200D9F97E /* Default-Portrait@2x~ipad.png */,
+				FD6BE6AE1639AA4C00D9F97E /* Default-Portrait~ipad.png */,
 				FD9F42DE15F3BE750092B98B /* CathedralWindow */,
 				FD9F430015F3BE750092B98B /* CathedralWindowTests */,
 				FD9F42D315F3BE750092B98B /* Frameworks */,
@@ -156,12 +158,10 @@
 			isa = PBXGroup;
 			children = (
 				FD6BE6AC1639A48300D9F97E /* glassblower.png */,
-				FD6BE6AA1639A47500D9F97E /* Default~ipad.png */,
 				FD6BE6A61639A46F00D9F97E /* Default-568h@2x.png */,
 				FD6BE6A71639A46F00D9F97E /* Default.png */,
 				FD6BE6A41639A21200D9F97E /* glassblower@2x.png */,
 				FD6BE6A01639A20300D9F97E /* Default@2x.png */,
-				FD6BE6A11639A20300D9F97E /* Default~ipad@2x.png */,
 				FD6BE69E163983C300D9F97E /* empty.png */,
 				FD9F42E715F3BE750092B98B /* CWAppDelegate.h */,
 				FD9F42E815F3BE750092B98B /* CWAppDelegate.m */,
@@ -290,12 +290,12 @@
 				FD9F42F015F3BE750092B98B /* Shader.vsh in Resources */,
 				FD6BE69F163983C300D9F97E /* empty.png in Resources */,
 				FD6BE6A21639A20300D9F97E /* Default@2x.png in Resources */,
-				FD6BE6A31639A20300D9F97E /* Default~ipad@2x.png in Resources */,
 				FD6BE6A51639A21200D9F97E /* glassblower@2x.png in Resources */,
 				FD6BE6A81639A46F00D9F97E /* Default-568h@2x.png in Resources */,
 				FD6BE6A91639A46F00D9F97E /* Default.png in Resources */,
-				FD6BE6AB1639A47500D9F97E /* Default~ipad.png in Resources */,
 				FD6BE6AD1639A48300D9F97E /* glassblower.png in Resources */,
+				FD6BE6AF1639AA4C00D9F97E /* Default-Portrait~ipad.png in Resources */,
+				FD6BE6B11639AA9200D9F97E /* Default-Portrait@2x~ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
