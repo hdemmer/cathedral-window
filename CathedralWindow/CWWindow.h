@@ -12,6 +12,8 @@
 
 #import "CWWindowShape.h"
 
+#import "CWTimeSingleton.h"
+
 @interface CWWindow : NSObject
 {    
     GLuint _vertexArray;

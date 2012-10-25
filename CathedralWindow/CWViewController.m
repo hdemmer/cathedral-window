@@ -246,7 +246,7 @@ GLint uniforms[NUM_UNIFORMS];
     } else {
         [UIView animateWithDuration:0.6 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             self.busyImageView.alpha = 0.0f;
-        } completion:NULL];        
+        } completion:NULL];
     }
 }
 
@@ -267,6 +267,25 @@ GLint uniforms[NUM_UNIFORMS];
     [self performSelector:@selector(updateBusyImageView) withObject:nil afterDelay:0.1];
 }
 
+- (void) randomImageForRandomWindow
+{
+    
+    if ([self.windows count]>1)
+    {
+        NSInteger windowIndex = rand() % [self.windows count];
+        
+        if (windowIndex != _lastRandomIndex)
+        {
+            [self randomImageForWindow:[self.windows objectAtIndex:windowIndex]];
+            
+            _lastRandomIndex = windowIndex;
+        }
+    }
+    
+    [self performSelector:@selector(randomImageForRandomWindow) withObject:nil afterDelay:11.0];
+    
+}
+
 - (void)setupGL
 {
     [EAGLContext setCurrentContext:self.context];
@@ -276,7 +295,7 @@ GLint uniforms[NUM_UNIFORMS];
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glDisable(GL_ALPHA_TEST);
-//    glBlendFunc(GL_ONE, GL_SRC_COLOR);
+    //    glBlendFunc(GL_ONE, GL_SRC_COLOR);
     
     glClearColor(0.01f, 0.01f, 0.02f, 1.0f);
     
@@ -315,6 +334,8 @@ GLint uniforms[NUM_UNIFORMS];
         [self randomImageForWindow:(CWWindow*)obj];
     }];
     
+    [self performSelector:@selector(randomImageForRandomWindow) withObject:nil afterDelay:15.0];
+    
     glUseProgram(_program);
     
     glUniform1i(uniforms[UNIFORM_TEXTURE_SAMPLER], 0);
@@ -326,7 +347,7 @@ GLint uniforms[NUM_UNIFORMS];
     glUniform3f(uniforms[UNIFORM_SUN_COLOR], 1.0f, 0.95f, 0.75f);
     
     glUniform1f(uniforms[UNIFORM_AMBIENT_INTENSITY], 0.3+0.1*sinf(t));
-
+    
 }
 
 - (void)tearDownGL
@@ -366,24 +387,6 @@ GLint uniforms[NUM_UNIFORMS];
 {
     [[CWTimeSingleton sharedInstance] addTime:self.timeSinceLastUpdate];
     
-    /*
-     // disabled for now, because it is irritating
-    NSTimeInterval t = [[CWTimeSingleton sharedInstance] currentTime];
-    
-    if (t - _lastRandomImage > 1.0)
-    {
-        NSInteger windowIndex = rand() % [self.windows count];
-        
-        if (windowIndex != _lastRandomIndex)
-        {
-            [self randomImageForWindow:[self.windows objectAtIndex:windowIndex]];
-            
-            _lastRandomImage = t;
-            _lastRandomIndex = windowIndex;
-        }
-    }
-    */
-    
     _animationLambda += self.timeSinceLastUpdate/2.0;
     if (_animationLambda > 1)
         _animationLambda = 1;
@@ -417,7 +420,7 @@ GLint uniforms[NUM_UNIFORMS];
     
     float theTime = [[CWTimeSingleton sharedInstance] currentTime];
     glUniform1f(uniforms[UNIFORM_THE_TIME], theTime);
-
+    
     GLKVector3 eye = [self eyePosition];
     if (GLKVector3Length(GLKVector3Subtract(eye, _lastEye)))
     {
@@ -437,7 +440,7 @@ GLint uniforms[NUM_UNIFORMS];
         _lastMVP = _modelViewProjectionMatrix;
     }
     
-
+    
     for (CWWindow * window in self.windows)
     {
         [window draw];

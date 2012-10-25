@@ -8,8 +8,6 @@
 
 #import "CWWindow.h"
 
-#import "CWTimeSingleton.h"
-
 
 float cwRandom(float min, float max)
 {
@@ -268,9 +266,7 @@ dispatch_queue_t windowQueue=nil;
     int numNodes = gridWidth * gridWidth;
     
     CWVertex * nodes = calloc(numNodes, sizeof(CWVertex));
-    
-    NSTimeInterval theTime = [[CWTimeSingleton sharedInstance] currentTime];
-    
+        
     for (int x=0; x<gridWidth; x++)
     {
         for (int y=0; y<gridWidth; y++)
@@ -347,8 +343,6 @@ dispatch_queue_t windowQueue=nil;
                 nodes[x+gridWidth*y].b2 = b+cwRandom(0.0, 0.1);
                 
             }
-            nodes[x+gridWidth*y].animationStartTime = theTime;
-            
         }
     }
     
@@ -405,6 +399,13 @@ dispatch_queue_t windowQueue=nil;
             }
         }
     }
+    
+    NSTimeInterval theTime = [[CWTimeSingleton sharedInstance] currentTime];
+    for (int i = 0;i<numVertices;i++)
+    {
+        vertices[i].animationStartTime = theTime;
+    }
+
     
     result.numberOfVertices = numVertices;
     result.vertices = vertices;
