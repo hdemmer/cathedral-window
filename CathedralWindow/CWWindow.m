@@ -434,7 +434,7 @@ dispatch_queue_t windowQueue=nil;
         self.nextImage = [self image:image ByScalingAndCroppingForSize:CGSizeMake(IMAGE_SIZE, IMAGE_SIZE)];
         
         if (!self.currentImage)
-            self.currentImage = self.nextImage;
+            self.currentImage = [UIImage imageNamed:@"empty.png"];
         
         // triangles
         

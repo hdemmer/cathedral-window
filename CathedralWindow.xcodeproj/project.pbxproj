@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		FD423F601604BD7A00A9D6F6 /* CWTimeSingleton.m in Sources */ = {isa = PBXBuildFile; fileRef = FD423F5F1604BD7A00A9D6F6 /* CWTimeSingleton.m */; };
+		FD6BE69F163983C300D9F97E /* empty.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE69E163983C300D9F97E /* empty.png */; };
 		FD9ECDB2162EC5B200347AD7 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FD9ECDB1162EC5B200347AD7 /* Default-568h@2x.png */; };
 		FD9F42D515F3BE750092B98B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D415F3BE750092B98B /* UIKit.framework */; };
 		FD9F42D715F3BE750092B98B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F42D615F3BE750092B98B /* Foundation.framework */; };
@@ -27,11 +28,8 @@
 		FD9F430515F3BE750092B98B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FD9F430315F3BE750092B98B /* InfoPlist.strings */; };
 		FD9F430815F3BE750092B98B /* CathedralWindowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F430715F3BE750092B98B /* CathedralWindowTests.m */; };
 		FD9F431715F54E610092B98B /* CWWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F431615F54E610092B98B /* CWWindow.m */; };
-		FD9F431A15F5556A0092B98B /* splash.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FD9F431915F5556A0092B98B /* splash.jpg */; };
 		FD9F432415F915500092B98B /* CWTriangleProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F432315F915500092B98B /* CWTriangleProcessor.m */; };
 		FD9F432715FA48260092B98B /* CWWindowShape.m in Sources */ = {isa = PBXBuildFile; fileRef = FD9F432615FA48260092B98B /* CWWindowShape.m */; };
-		FD9F432915FB44720092B98B /* smallWindow.png in Resources */ = {isa = PBXBuildFile; fileRef = FD9F432815FB44720092B98B /* smallWindow.png */; };
-		FD9F432B15FB89650092B98B /* Ronan.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FD9F432A15FB89650092B98B /* Ronan.jpg */; };
 		FD9F432D15FE6D3B0092B98B /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9F432C15FE6D3B0092B98B /* AssetsLibrary.framework */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +46,7 @@
 /* Begin PBXFileReference section */
 		FD423F5E1604BD7A00A9D6F6 /* CWTimeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWTimeSingleton.h; sourceTree = "<group>"; };
 		FD423F5F1604BD7A00A9D6F6 /* CWTimeSingleton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWTimeSingleton.m; sourceTree = "<group>"; };
+		FD6BE69E163983C300D9F97E /* empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = empty.png; sourceTree = "<group>"; };
 		FD9ECDB1162EC5B200347AD7 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		FD9F42D015F3BE750092B98B /* CathedralWindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CathedralWindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD9F42D415F3BE750092B98B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -74,13 +73,10 @@
 		FD9F430715F3BE750092B98B /* CathedralWindowTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CathedralWindowTests.m; sourceTree = "<group>"; };
 		FD9F431515F54E610092B98B /* CWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWWindow.h; sourceTree = "<group>"; };
 		FD9F431615F54E610092B98B /* CWWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWWindow.m; sourceTree = "<group>"; };
-		FD9F431915F5556A0092B98B /* splash.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = splash.jpg; sourceTree = "<group>"; };
 		FD9F432215F915500092B98B /* CWTriangleProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWTriangleProcessor.h; sourceTree = "<group>"; };
 		FD9F432315F915500092B98B /* CWTriangleProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWTriangleProcessor.m; sourceTree = "<group>"; };
 		FD9F432515FA48260092B98B /* CWWindowShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWWindowShape.h; sourceTree = "<group>"; };
 		FD9F432615FA48260092B98B /* CWWindowShape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CWWindowShape.m; sourceTree = "<group>"; };
-		FD9F432815FB44720092B98B /* smallWindow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smallWindow.png; sourceTree = "<group>"; };
-		FD9F432A15FB89650092B98B /* Ronan.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Ronan.jpg; sourceTree = "<group>"; };
 		FD9F432C15FE6D3B0092B98B /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -148,9 +144,7 @@
 		FD9F42DE15F3BE750092B98B /* CathedralWindow */ = {
 			isa = PBXGroup;
 			children = (
-				FD9F432A15FB89650092B98B /* Ronan.jpg */,
-				FD9F432815FB44720092B98B /* smallWindow.png */,
-				FD9F431915F5556A0092B98B /* splash.jpg */,
+				FD6BE69E163983C300D9F97E /* empty.png */,
 				FD9F42E715F3BE750092B98B /* CWAppDelegate.h */,
 				FD9F42E815F3BE750092B98B /* CWAppDelegate.m */,
 				FD9F42EA15F3BE750092B98B /* MainStoryboard.storyboard */,
@@ -276,10 +270,8 @@
 				FD9F42EC15F3BE750092B98B /* MainStoryboard.storyboard in Resources */,
 				FD9F42EE15F3BE750092B98B /* Shader.fsh in Resources */,
 				FD9F42F015F3BE750092B98B /* Shader.vsh in Resources */,
-				FD9F431A15F5556A0092B98B /* splash.jpg in Resources */,
-				FD9F432915FB44720092B98B /* smallWindow.png in Resources */,
-				FD9F432B15FB89650092B98B /* Ronan.jpg in Resources */,
 				FD9ECDB2162EC5B200347AD7 /* Default-568h@2x.png in Resources */,
+				FD6BE69F163983C300D9F97E /* empty.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
