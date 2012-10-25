@@ -153,8 +153,11 @@ GLint uniforms[NUM_UNIFORMS];
 
 - (void)loadAssets
 {
-    self.assetsLibrary = [[ALAssetsLibrary alloc] init];
-    self.mutableAssets = [NSMutableArray arrayWithCapacity:1024];
+    if (!self.assetsLibrary)
+        self.assetsLibrary = [[ALAssetsLibrary alloc] init];
+    
+    if (!self.mutableAssets)
+        self.mutableAssets = [NSMutableArray arrayWithCapacity:1024];
     
     [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
         if ([group numberOfAssets])
@@ -168,7 +171,7 @@ GLint uniforms[NUM_UNIFORMS];
             } ];
         }
     } failureBlock:^(NSError *error) {
-        NSLog(@"fail");
+        [self performSelector:@selector(loadAssets) withObject:nil afterDelay:3.0];
     }];
     
 }
@@ -198,7 +201,7 @@ GLint uniforms[NUM_UNIFORMS];
     view.drawableDepthFormat = GLKViewDrawableDepthFormatNone;
     
     [self setupGL];
-    [self performSelectorInBackground:@selector(loadAssets) withObject:nil];
+    [self loadAssets];
     
     [self performSelector:@selector(updateBusyImageView) withObject:nil afterDelay:0.5];
 }
@@ -251,7 +254,7 @@ GLint uniforms[NUM_UNIFORMS];
 }
 
 - (void) randomImageForWindow:(CWWindow*)window
-{
+{    
     if (![self.mutableAssets count])
     {
         [self performSelector:@selector(randomImageForWindow:) withObject:window afterDelay:1.0];
@@ -386,6 +389,9 @@ GLint uniforms[NUM_UNIFORMS];
 - (void)update
 {
     [[CWTimeSingleton sharedInstance] addTime:self.timeSinceLastUpdate];
+    
+    int seed = self.timeSinceFirstResume * 1000.0;
+    srand(seed);
     
     _animationLambda += self.timeSinceLastUpdate/2.0;
     if (_animationLambda > 1)

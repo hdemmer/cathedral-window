@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FD1387BE1639BE8B00D40E50 /* icon57.png in Resources */ = {isa = PBXBuildFile; fileRef = FD1387BD1639BE8B00D40E50 /* icon57.png */; };
+		FD1387C11639BE9600D40E50 /* icon114.png in Resources */ = {isa = PBXBuildFile; fileRef = FD1387C01639BE9600D40E50 /* icon114.png */; };
+		FD1387C31639BEAA00D40E50 /* icon72.png in Resources */ = {isa = PBXBuildFile; fileRef = FD1387C21639BEAA00D40E50 /* icon72.png */; };
+		FD1387C51639BEB100D40E50 /* icon144.png in Resources */ = {isa = PBXBuildFile; fileRef = FD1387C41639BEB100D40E50 /* icon144.png */; };
 		FD6BE69F163983C300D9F97E /* empty.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE69E163983C300D9F97E /* empty.png */; };
 		FD6BE6A21639A20300D9F97E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6A01639A20300D9F97E /* Default@2x.png */; };
 		FD6BE6A51639A21200D9F97E /* glassblower@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FD6BE6A41639A21200D9F97E /* glassblower@2x.png */; };
@@ -50,6 +54,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FD1387BD1639BE8B00D40E50 /* icon57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon57.png; sourceTree = "<group>"; };
+		FD1387C01639BE9600D40E50 /* icon114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon114.png; sourceTree = "<group>"; };
+		FD1387C21639BEAA00D40E50 /* icon72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon72.png; sourceTree = "<group>"; };
+		FD1387C41639BEB100D40E50 /* icon144.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon144.png; sourceTree = "<group>"; };
 		FD6BE69E163983C300D9F97E /* empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = empty.png; sourceTree = "<group>"; };
 		FD6BE6A01639A20300D9F97E /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		FD6BE6A41639A21200D9F97E /* glassblower@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glassblower@2x.png"; sourceTree = "<group>"; };
@@ -122,6 +130,10 @@
 		FD9F42C515F3BE750092B98B = {
 			isa = PBXGroup;
 			children = (
+				FD1387C41639BEB100D40E50 /* icon144.png */,
+				FD1387C21639BEAA00D40E50 /* icon72.png */,
+				FD1387C01639BE9600D40E50 /* icon114.png */,
+				FD1387BD1639BE8B00D40E50 /* icon57.png */,
 				FD6BE6B01639AA9200D9F97E /* Default-Portrait@2x~ipad.png */,
 				FD6BE6AE1639AA4C00D9F97E /* Default-Portrait~ipad.png */,
 				FD9F42DE15F3BE750092B98B /* CathedralWindow */,
@@ -296,6 +308,10 @@
 				FD6BE6AD1639A48300D9F97E /* glassblower.png in Resources */,
 				FD6BE6AF1639AA4C00D9F97E /* Default-Portrait~ipad.png in Resources */,
 				FD6BE6B11639AA9200D9F97E /* Default-Portrait@2x~ipad.png in Resources */,
+				FD1387BE1639BE8B00D40E50 /* icon57.png in Resources */,
+				FD1387C11639BE9600D40E50 /* icon114.png in Resources */,
+				FD1387C31639BEAA00D40E50 /* icon72.png in Resources */,
+				FD1387C51639BEB100D40E50 /* icon144.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
